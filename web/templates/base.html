@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+	<link href="{{ url_for('static', filename='dist/app.css')|autoversion}}" rel="stylesheet">
+	{% if title is defined %}
+	<title>{{ title }} - YouTube to MP3 Converter</title>
+	{% else %}
+	<title>YouTube to MP3 Converter</title>
+	{% endif %}
+</head>
+<body>
+	{% set navigation_bar = [
+		('/', 'home', 'Home'),
+		('/contact', 'contact', 'Contact'),
+		('/page/support', 'support', 'Support'),
+		('/page/privacy', 'privacy', 'Privacy')
+		] -%}
+		{% set active_page = active_page|default('home') -%}
+		
+		<nav id="topMenu" class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+			<div class="container">
+				<a class="navbar-brand" href="/">Convert2.Cloud</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop" aria-controls="navbarTop" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarTop">
+					<ul class="navbar-nav mr-auto">
+						{% for href, id, caption in navigation_bar %}
+						<li {% if id == active_page %}class="nav-link active"{% else %}class="nav-link"{% endif %}>
+							<a class="nav-link" href="{{ href|e }}">{{ caption|e }}</a></li>
+							{% endfor %}
+						</ul>
+						<ul class="nav navbar-nav ml-auto">							
+								{% if current_user.is_authenticated %}
+								<li class="nav-item"><a class="nav-link" href="{{ url_for("profile_page.profile") }}">Profile</a></li>
+								<li class="nav-item"><a class="nav-link" href="{{ url_for("profile_page.logout") }}">Log out</a></li>
+								{% else %}
+								<li class="nav-item"><a class="nav-link"  href="{{ url_for("facebook.login") }}">Login with Facebook</a></li>
+								{% endif %}                    														
+						</ul>            
+					</div>
+				</div>
+			</nav>
+			{% block content %}{% endblock %}
+			<div class="clearfix"><p></p><p></p></div>
+			<!-- Footer -->
+			<footer class="footer">
+				<div class="container">
+						<span class="text-muted"><p class="text-center">© 2020 Copyright TheBlueJourney</p></span>
+				</div>
+			</footer>
+			<!-- Optional JavaScript -->
+			{% block script %}{% endblock %}
+		</body>
+		</html>

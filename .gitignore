@@ -43,16 +43,18 @@ Thumbs.db
 .idea/
 __pycache__/
 venv/
-web/files/
+env/
+cache/
+web/files/*.*
 htmlcov/
 instance/
 build/
 *.egg-info/
-web/files/*.*
 *.pyc
 .coverage
-DEV.md
+docs/
 .envrc
 .vscode/
 node_modules
-web/static/src
+gcloud.json
+# web/static/src

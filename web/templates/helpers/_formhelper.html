@@ -1,0 +1,20 @@
+{% macro render_field(field) %}
+    <div class="form-group">
+      {{ field.label }}
+      <div class="col-md-9">
+        {% if field.errors %}
+          {% set css_class = 'form-control is-invalid ' + kwargs.pop('class', '') %}
+        {% else %}
+          {% set css_class = 'form-control' + kwargs.pop('class', '') %}
+         {% endif %}
+        {{ field(class=css_class, **kwargs)|safe }}
+      </div>
+    </div>
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li class="text-danger">{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}

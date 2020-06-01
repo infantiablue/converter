@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% set active_page = active_menu %}
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div id="page" class="col-lg-12 col-md-8 col-sm-6" >
+			<h1>{{title}}</h1>
+		<hr>
+		</div>
+		<div id="page" class="col-lg-12 col-md-8 col-sm-6" >
+		{{ page_content|safe }}
+		</div>
+	</div>
+</div>
+{% endblock %}

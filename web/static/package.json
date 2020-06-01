@@ -1,0 +1,59 @@
+{
+  "name": "c2c-frontend",
+  "version": "1.0.0",
+  "description": "the user inteface of convert2.cloud app",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js --optimize-minimize",
+    "watch": "webpack --watch --config webpack.dev.js"
+  },
+  "keywords": [
+    "ui",
+    "vue",
+    "webpack"
+  ],
+  "author": "Truong Phan",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2016": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.19",
+    "compression-webpack-plugin": "^4.0.0",
+    "css-loader": "^0.28.11",
+    "file-loader": "^1.1.11",
+    "mini-css-extract-plugin": "^0.4.5",
+    "node-sass": "^4.14.1",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-loader": "^2.1.6",
+    "sass-loader": "^7.3.1",
+    "style-loader": "^0.21.0",
+    "terser-webpack-plugin": "^3.0.2",
+    "vue-loader": "^15.9.2",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.43.0",
+    "webpack-bundle-analyzer": "^3.8.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-manifest-plugin": "^2.2.0",
+    "webpack-merge": "^4.2.2",
+    "webpack-visualizer-plugin": "^0.1.11"
+  },
+  "dependencies": {
+    "axios": "^0.18.1",
+    "bootstrap": "^4.5.0",
+    "bootstrap-vue": "^2.15.0",
+    "bootswatch": "^4.5.0",
+    "clipboard": "^2.0.6",
+    "jquery": "^3.5.1",
+    "lodash": "^4.17.15",
+    "popper.js": "^1.16.1",
+    "vue": "^2.6.11",
+    "vue-progress": "^0.2.1",
+    "vue-spinner": "^1.0.3",
+    "vuelidate": "^0.7.5"
+  }
+}
