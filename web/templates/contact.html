@@ -11,17 +11,8 @@
                         <legend class="text-center">Have something to tell us !?</legend>
                         {% with messages = get_flashed_messages(with_categories=true) %}
                             {% if messages %}
-                                {% for message in messages %}
-                                    {% if "Error" not in message[1]: %}
-                                    <div class="alert alert-success">
-                                        <strong>Success! </strong> {{ message[1] }}
-                                    </div>
-                                    {% endif %}
-                                    {% if "Error" in message[1]: %}
-                                    <div class="alert alert-danger">
-                                        {{ message[1] }}
-                                    </div>
-                                    {% endif %}
+                                {% for category, message in messages %}
+                                  <div class="alert alert-{{category}}">{{ message }}</div>
                                 {% endfor %}
                             {% endif %}
                         {% endwith %}

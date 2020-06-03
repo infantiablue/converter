@@ -1,16 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
-	<div class="row">
-		<div id="page" class="col-lg-12 col-md-8 col-sm-6" >
-    {% if current_user.is_authenticated %}
-      You are logged in as {{ current_user.fullname }}!
-      <a href="{{ url_for("profile_page.logout") }}">Log out</a>
-    {% else %}
-      You are not logged in.
-      <a href="{{ url_for("facebook.login") }}">Log in</a>
-    {% endif %}
-    </div>
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="well well-sm">
+              <form class="form-horizontal" action="/profile" method="post">
+                  {{ form.csrf }}
+                  <fieldset>
+                      <legend class="text-center">Your details</legend>
+                          <div id="page" class="col-lg-12 col-md-8 col-sm-6" >
+                          {% with messages = get_flashed_messages(with_categories=true) %}
+                          {% if messages %}
+                            {% for category, message in messages %}
+                              <div class="alert alert-{{category}}">{{ message }}</div>
+                            {% endfor %}
+                          {% endif %}
+                          {% endwith %}
+                      {% from "helpers/_formhelper.html" import render_field %}
+                      {{ render_field(form.username) }}
+                      <!-- Form actions -->
+                      <div class="form-group">
+                          <div class="col-md-12 text-left">
+                              <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                          </div>
+                      </div>
+                  </fieldset>
+              </form>
+      </div>
+    </div>    
   </div>
 </div>  
 {% endblock %}

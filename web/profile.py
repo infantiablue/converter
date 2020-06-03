@@ -1,6 +1,6 @@
 import sys
 import os
-from flask import Flask, redirect, url_for, flash, render_template, Blueprint, current_app
+from flask import Flask, redirect, url_for, flash, render_template, Blueprint, current_app, request
 from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 from flask_dance.consumer import oauth_authorized, oauth_error
 from flask_login import (
@@ -8,11 +8,10 @@ from flask_login import (
     login_required, login_user, logout_user
 )
 from google.cloud import datastore
-from werkzeug.contrib.fixers import ProxyFix
 from .user import User, GoogleDatastoreBackend, OathUser
+from wtforms import Form, validators, StringField
 
 profile_page = Blueprint('profile_page', __name__, None)
-profile_page.config = {}
 
 blueprint = make_facebook_blueprint(
     client_id=os.environ.get("FACEBOOK_OAUTH_CLIENT_ID"),
@@ -31,19 +30,17 @@ login_manager.login_view = 'facebook.login'
 def load_user(user_id):
     return User(user_id=user_id)
 
-# create/login local user on successful OAuth login
-
 
 @oauth_authorized.connect_via(blueprint)
+# create/login local user on successful OAuth login
 def facebook_logged_in(blueprint, token):
     if not token:
-        # flash("Failed to log in with facebook.", category="error")
+        flash('Failed to log in with facebook.', category='error')
         return False
 
     resp = blueprint.session.get('/me?fields=email,name')
     if not resp.ok:
         msg = 'Failed to fetch user info from facebook.'
-        # flash(msg, category='error')
         return False
 
     facebook_info = resp.json()
@@ -58,14 +55,12 @@ def facebook_logged_in(blueprint, token):
         oauth_user = False
 
     if oauth_user:
-        print(oauth_user.user_id)
         login_user(User(user_id=oauth_user.user_id))
-        # flash('Successfully signed in with facebook.')
     else:
         new_user = User(
             fullname=facebook_info['name'],
             email=facebook_info['email'],
-            username=None
+            username=None,
         )
         OathUser(
             token=token,
@@ -75,7 +70,6 @@ def facebook_logged_in(blueprint, token):
         )
         # Log in the new local user account
         login_user(new_user)
-        # flash('Successfully signed in with facebook.')
 
     # Disable Flask-Dance's default behavior for saving the OAuth token
     return False
@@ -93,7 +87,6 @@ def facebook_error(blueprint, error, error_description=None, error_uri=None):
         description=error_description,
         uri=error_uri,
     )
-    # flash(msg, category='error')
 
 
 @profile_page.route('/logout')
@@ -103,6 +96,23 @@ def logout():
     return redirect('/')
 
 
-@profile_page.route('/profile')
+class ProfileForm(Form):
+    username = StringField('Username:', validators=[
+                           validators.required(), validators.Length(min=4)])
+
+
+@profile_page.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.html')
+    user = User(user_id=current_user.user_id)
+    form = ProfileForm(request.form)
+    if request.method == 'GET':
+        if not current_user.username:
+            # flash message, with category following bootstrap CSS info class convenience
+            flash('You have not set your username yet', category='danger')
+        else:
+            form.username.data = current_user.username
+    if request.method == 'POST' and form.validate():
+        user.set_username(request.form['username'])
+        flash('You updated your username succesfully', category='success')
+        return redirect('/profile')
+    return render_template('profile.html', title='Profile', form=form)

@@ -57,4 +57,3 @@ docs/
 .vscode/
 node_modules
 gcloud.json
-# web/static/src

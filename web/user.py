@@ -86,7 +86,6 @@ class User(UserMixin):
         [self.__setattr__(key, kwargs.get(key))
          for key in self.__acceptable_keys_list]
         if not self.user_id:
-            print('creating new user')
             user_key = self.client.key('Users')
             user = datastore.Entity(key=user_key)
             user['fullname'] = self.fullname
@@ -106,6 +105,11 @@ class User(UserMixin):
 
     def get_id(self):
         return self.user_id
+
+    def set_username(self, username):
+        updated_user = User.get(self.user_id)
+        updated_user['username'] = username
+        User.client.put(updated_user)
 
     @staticmethod
     def get(user_id):

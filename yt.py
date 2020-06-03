@@ -12,8 +12,8 @@ YT_KEY = os.environ.get("YOUTUBE_API_KEY"),
 # set up cache system
 cache_opts = {
     'cache.type': 'dbm',
-    'cache.data_dir': '/tmp/cache/data',
-    'cache.lock_dir': '/tmp/cache/lock'
+    'cache.data_dir': APP_PATH + '/cache/data',
+    'cache.lock_dir': APP_PATH + '/cache/lock'
 }
 cache = CacheManager(**parse_cache_config_options(cache_opts))
 tmpl_cache = cache.get_cache('template', type='dbm', expire=1800)
@@ -101,4 +101,4 @@ def search_video_youtube(keyword='', limit=30):
 
 
 if __name__ == '__main__':
-    print(search_video_youtube('brazil'))
+    pass
