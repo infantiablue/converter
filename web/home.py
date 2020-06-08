@@ -17,6 +17,7 @@ static_file_dir = os.path.join(APP_PATH, 'files')
 home_page = Blueprint('home_page', __name__)
 
 
+# autoversioning feature to avoid cached static files
 @home_page.app_template_filter('autoversion')
 def autoversion_filter(filename):
     # determining fullpath might be project specific
