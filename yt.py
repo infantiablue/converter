@@ -7,8 +7,8 @@ from beaker.util import parse_cache_config_options
 
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
 CACHE_FILE = APP_PATH + '/' + 'cache/popular_youtube.json'
-YT_KEY = os.environ.get("YOUTUBE_API_KEY"),
-
+YT_KEY = str(os.environ.get('YOUTUBE_API_KEY'))
+YT_API_ENDPOINT = 'https://www.googleapis.com/youtube/v3/'
 # set up cache system
 cache_opts = {
     'cache.type': 'dbm',
@@ -30,12 +30,10 @@ def get_popular_video_youtube(limit=30, random_videos=False, country='US'):
     }
     if not tmpl_cache.has_key(country):
         def cache_respond():
-            res = requests.get(
-                'https://www.googleapis.com/youtube/v3/videos', params=payload)
+            res = requests.get(YT_API_ENDPOINT+'videos', params=payload)
             if res.status_code != 200:
                 payload['regionCode'] = 'US'
-                res = requests.get(
-                    'https://www.googleapis.com/youtube/v3/videos', params=payload)
+                res = requests.get(YT_API_ENDPOINT+'videos', params=payload)
             return res
         res = tmpl_cache.get(key=country, createfunc=cache_respond)
     else:
@@ -79,7 +77,7 @@ def search_video_youtube(keyword='', limit=30):
         'key': YT_KEY
     }
     res = requests.get(
-        'https://www.googleapis.com/youtube/v3/search', params=payload)
+        YT_API_ENDPOINT+'search', params=payload)
     data = res.json()
     result = []
     if 'items' in data:
@@ -100,5 +98,23 @@ def search_video_youtube(keyword='', limit=30):
         return json.dumps(data, indent=4)
 
 
+def get_yt_video_time(yt_video_url):
+    import isodate
+    import urllib.parse as urlparse
+    from urllib.parse import parse_qs
+
+    # parse url to get video ID
+    parsed = urlparse.urlparse(yt_video_url)
+    yt_video_id = parse_qs(parsed.query)['v'][0]
+    # make api request
+    res = requests.get(
+        YT_API_ENDPOINT+'videos?id='+yt_video_id+'&part=contentDetails&key='+YT_KEY)
+    data = res.json()
+    # convert time to seconds
+    t = isodate.parse_duration(data['items'][0]['contentDetails']['duration'])
+    return str(int(t.total_seconds()))
+
+
 if __name__ == '__main__':
-    pass
+    print(get_yt_video_time(
+        'https://www.youtube.com/watch?v=LNYgeFsobZY'))

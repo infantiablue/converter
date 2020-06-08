@@ -16,8 +16,6 @@ def create_app():
     app = Flask(__name__)
     app.wsgi_app = ProxyFix(app.wsgi_app)
     app.config.from_object('config')
-    os.environ['LANG'] = 'en_US.UTF-8'
-    #os.environ['FLASK_ENV'] = app.config['ENV']
 
     # load modules
     app.register_blueprint(home_page)

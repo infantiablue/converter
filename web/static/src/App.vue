@@ -111,6 +111,7 @@ if (String(location.hash).substring(0, 1) == "#") {
   location.hash = "";
   location.href = location.href.substring(0, location.href.length - 3);
 }
+/* End of Fixed FB Login*/
 
 /* Adapt to Vue.js */
 function getYoutubeVideo() {
@@ -226,40 +227,56 @@ export default {
       this.errorDownload = false;
       this.spinner_loading = true;
       axios
-        .post("/convert", {
-          urls: this.urlToDownload,
-          audio_quality: this.audioQuality
+        .post("/get_duration", {
+          yt_video_url: this.urlToDownload
         })
         .then(response => {
-          let result = JSON.parse(response.data);
-          if (result.status == true) {
-            filename = result.data.filename;
-            var path = result.data.path;
-            this.urlForDownload = "file/" + path + ".mp3";
-            this.downloadSuccess = true;
-            this.formUrl = false;
+          var duration = parseInt(response.data);
+          if (duration < 600) {
+            // Process to download
+            axios
+              .post("/convert", {
+                urls: this.urlToDownload,
+                audio_quality: this.audioQuality
+              })
+              .then(response => {
+                let result = JSON.parse(response.data);
+                if (result.status == true) {
+                  filename = result.data.filename;
+                  var path = result.data.path;
+                  this.urlForDownload = "file/" + path + ".mp3";
+                  this.downloadSuccess = true;
+                  this.formUrl = false;
+                } else {
+                  this.errorDownload = true;
+                  this.errorDownloadMsg = result.error;
+                }
+              })
+              .catch(error => {
+                //console.log(error)
+                this.errorDownload = true;
+              })
+              .finally(() => {
+                this.spinner_loading = false;
+                this.formUrl = false;
+                if (this.errorDownload === false) {
+                  createDBButton(
+                    encodeURI(
+                      "https://" +
+                        window.location.hostname +
+                        "/" +
+                        this.urlForDownload
+                    ),
+                    unescape(filename)
+                  );
+                }
+              });
           } else {
             this.errorDownload = true;
-            this.errorDownloadMsg = result.error;
-          }
-        })
-        .catch(error => {
-          //console.log(error)
-          this.errorDownload = true;
-        })
-        .finally(() => {
-          this.spinner_loading = false;
-          this.formUrl = false;
-          if (this.errorDownload === false) {
-            createDBButton(
-              encodeURI(
-                "https://" +
-                  window.location.hostname +
-                  "/" +
-                  this.urlForDownload
-              ),
-              unescape(filename)
-            );
+            this.spinner_loading = false;
+            this.formUrl = false;
+            this.errorDownloadMsg =
+              "Your selected video is long than 10 minutes.";
           }
         });
     }

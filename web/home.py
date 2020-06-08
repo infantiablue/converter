@@ -76,7 +76,6 @@ def test():
 def progress():
     def generate():
         x = 0
-
         while x <= 100:
             yield "data:" + str(x) + "\n\n"
             x = x + 10
@@ -107,3 +106,11 @@ def popular():
     if request.method == 'GET':
         limit = request.args.get('limit')
         return jsonify(get_popular_video_youtube(limit=limit, random_videos=True, country=country_code)), 200
+
+
+@home_page.route('/get_duration', methods=['POST'])
+def get_duration():
+    if request.method == 'POST':
+        from yt import get_yt_video_time
+        yt_video_url = request.json['yt_video_url']
+        return get_yt_video_time(yt_video_url), 200
