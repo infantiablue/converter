@@ -4,7 +4,7 @@ import json
 import requests
 from beaker.cache import CacheManager
 from beaker.util import parse_cache_config_options
-from yt import get_popular_video_youtube, search_video_youtube
+from backend.yt import get_popular_video_youtube, search_video_youtube
 
 # set up cache system
 cache_opts = {

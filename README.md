@@ -39,7 +39,7 @@ The idea is to practice some modern web technologies such as *Flask, VueJS, Webp
         export MAIL_USERNAME="[your-email-address]"
         export MAIL_PASSWORD="[your-email-password]"
         export MAIL_SENDER="Converter"
-        export SUPERVISOR_PWD="[your-app-root-directory]"
+        export APP_PWD="[your-app-root-directory]"
         gcloud config set project [your-google-cloud-project-id]
 
 7. Install Python dependencies 'pip install -r requirements.txt`

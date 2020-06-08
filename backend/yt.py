@@ -5,8 +5,9 @@ import random
 from beaker.cache import CacheManager
 from beaker.util import parse_cache_config_options
 
-APP_PATH = os.path.dirname(os.path.realpath(__file__))
-CACHE_FILE = APP_PATH + '/' + 'cache/popular_youtube.json'
+APP_PATH = os.environ.get('APP_PWD')
+
+CACHE_FILE = APP_PATH + '/cache/popular_youtube.json'
 YT_KEY = str(os.environ.get('YOUTUBE_API_KEY'))
 YT_API_ENDPOINT = 'https://www.googleapis.com/youtube/v3/'
 # set up cache system
@@ -116,5 +117,4 @@ def get_yt_video_time(yt_video_url):
 
 
 if __name__ == '__main__':
-    print(get_yt_video_time(
-        'https://www.youtube.com/watch?v=LNYgeFsobZY'))
+    print(get_popular_video_youtube(limit=15))

@@ -6,7 +6,7 @@ from google.cloud import datastore
 from flask_dance.consumer.storage import BaseStorage
 from flask_login import UserMixin, current_user
 
-ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.'))
+APP_PATH = os.environ.get('APP_PWD')
 
 
 def query_handling(function):
@@ -21,13 +21,12 @@ def query_handling(function):
                 str(exc_tb.tb_lineno) + ' | ' + str(e)
             print(error_msg)
             return None
-
     return wrapper
 
 
 class OathUser(UserMixin):
     client = datastore.Client.from_service_account_json(
-        ROOT_PATH+'/gcloud.json')
+        APP_PATH+'/config/gcloud.json')
     __acceptable_keys_list = ['oauth_id', 'provider',
                               'provider_user_id', 'user_id', 'token']
 
@@ -79,7 +78,7 @@ class OathUser(UserMixin):
 
 class User(UserMixin):
     client = datastore.Client.from_service_account_json(
-        ROOT_PATH+'/gcloud.json')
+        APP_PATH+'/config/gcloud.json')
     __acceptable_keys_list = ['fullname', 'email', 'username', 'user_id']
 
     def __init__(self, **kwargs):
@@ -134,7 +133,7 @@ class GoogleDatastoreBackend(BaseStorage):
     def __init__(self):
         super(GoogleDatastoreBackend, self).__init__()
         self.client = datastore.Client.from_service_account_json(
-            ROOT_PATH+'/gcloud.json')
+            APP_PATH+'/config/gcloud.json')
 
     @query_handling
     def get(self, provider, provider_user_id):

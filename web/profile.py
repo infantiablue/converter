@@ -98,15 +98,18 @@ def logout():
 
 class ProfileForm(Form):
     username = StringField('Username:', validators=[
-                           validators.required(), validators.Length(min=4)])
+                           validators.DataRequired(), validators.Length(min=4)])
 
 
 @profile_page.route('/profile', methods=['GET', 'POST'])
 def profile():
-    user = User(user_id=current_user.user_id)
+    if not facebook.authorized:
+        return redirect(url_for('facebook.login'))
+    if hasattr(current_user, 'user_id'):
+        user = User(user_id=current_user.user_id)
     form = ProfileForm(request.form)
     if request.method == 'GET':
-        if not current_user.username:
+        if not hasattr(current_user, 'username'):
             # flash message, with category following bootstrap CSS info class convenience
             flash('You have not set your username yet', category='danger')
         else:

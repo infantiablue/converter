@@ -6,8 +6,8 @@ from flask import Flask, render_template, send_from_directory, request, redirect
 
 from process import download
 import requests
-from yt import get_popular_video_youtube, search_video_youtube
-from utils import get_client_ip
+from backend.yt import get_popular_video_youtube, search_video_youtube
+from backend.utils import get_client_ip
 # setup encoding and absolute root path
 # ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.'))
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -68,23 +68,6 @@ def send_img(path):
     return send_from_directory(static_file_dir, path)
 
 
-@home_page.route('/test')
-def test():
-    return render_template('progress.html')
-
-
-@home_page.route('/progress')
-def progress():
-    def generate():
-        x = 0
-        while x <= 100:
-            yield "data:" + str(x) + "\n\n"
-            x = x + 10
-            time.sleep(0.5)
-
-    return Response(generate(), mimetype='text/event-stream')
-
-
 @home_page.route('/convert', methods=['POST'])
 def convert():
     if request.method == 'POST':
@@ -105,13 +88,16 @@ def popular():
         else:
             country_code = 'US'
     if request.method == 'GET':
-        limit = request.args.get('limit')
+        if 'limit' in request.args:
+            limit = request.args.get('limit')
+        else:
+            limit = 30
         return jsonify(get_popular_video_youtube(limit=limit, random_videos=True, country=country_code)), 200
 
 
 @home_page.route('/get_duration', methods=['POST'])
 def get_duration():
     if request.method == 'POST':
-        from yt import get_yt_video_time
+        from backend.yt import get_yt_video_time
         yt_video_url = request.json['yt_video_url']
         return get_yt_video_time(yt_video_url), 200

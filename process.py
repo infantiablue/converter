@@ -7,9 +7,9 @@ import os
 import logging
 import youtube_dl
 import unidecode
-import glog
+from backend import glog
 import uuid
-from utils import print_progress_bar, get_timestamp
+from backend.utils import print_progress_bar, get_timestamp
 
 DURATION_LIMIT = 1800
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -130,7 +130,6 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web'):
                 'extenstion': '.' + audio_format
             }
         })
-
         return json_result
     else:
         glog.write_log('download', json.dumps({
@@ -145,26 +144,6 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web'):
         })
 
 
-def run_command(command):
-    import subprocess
-    import shlex
-    import re
-
-    _DURATION_RX = re.compile("Duration: (\d{2}):(\d{2}):(\d{2})\.\d{2}")
-    _PROGRESS_RX = re.compile("time=(\d{2}):(\d{2}):(\d{2})\.\d{2}")
-    _SOURCE_RX = re.compile("from '(.*)':")
-
-    process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
-    while True:
-        output = process.stdout.readline()
-        if output == '' and process.poll() is not None:
-            break
-        if output:
-            search = _DURATION_RX.search(output)
-
-    rc = process.poll()
-    return rc
-
-
 if __name__ == '__main__':
-    print(download(['https://youtube.com/watch?v=_aghWPzkB7M']))
+    result = json.loads(download(['https://youtube.com/watch?v=qbrgk2oCNFA']))
+    print(result['data']['filename'])

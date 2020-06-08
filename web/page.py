@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, abort, current_app, request, flash, url_for, redirect
 from jinja2 import TemplateNotFound
-from utils import send_email
+from backend.utils import send_email
 from wtforms import Form, TextAreaField, validators, StringField
 
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -13,11 +13,11 @@ contact_page = Blueprint('contact_page', __name__)
 
 class ContactForm(Form):
     name = StringField('Name:', validators=[
-                       validators.required(), validators.Length(min=1)])
-    email = StringField('Email:', validators=[validators.required(
+                       validators.DataRequired(), validators.Length(min=1)])
+    email = StringField('Email:', validators=[validators.DataRequired(
     ), validators.Length(min=6, max=35), validators.Email()])
     message = TextAreaField('Message:', validators=[
-                            validators.required(), validators.Length(min=10, max=200)])
+                            validators.DataRequired(), validators.Length(min=10, max=200)])
 
 
 @contact_page.route('/contact', methods=['GET', 'POST'])
@@ -53,4 +53,3 @@ def page(page_name):
     text = input_file.read()
     html = Markup(md.convert(text))
     return render_template('page.html', page_content=html, title=md.Meta['title'][0], active_menu=page_name)
-

@@ -89,7 +89,6 @@
 import Vue from "vue";
 import axios from "axios";
 import ScaleLoader from "vue-spinner/src/ScaleLoader.vue";
-import "vue-progress";
 import Vuelidate from "vuelidate";
 import { required, url } from "vuelidate/lib/validators";
 import ClipboardJS from "clipboard";
@@ -154,7 +153,6 @@ function createDBButton(url, filename) {
     success: function() {
       alert("Success! Files saved to your Dropbox.");
     },
-    progress: function(progress) {},
     cancel: function() {},
     error: function(errorMessage) {
       console.log(errorMessage);

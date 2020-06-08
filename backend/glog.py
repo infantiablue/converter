@@ -2,9 +2,10 @@ import os
 from google.cloud import logging
 
 # TODO : auto set environment variable GOOGLE_APPLICATION_CREDENTIALS for production environment
-APP_PATH = os.path.dirname(os.path.realpath(__file__))
+
+APP_PATH = os.environ.get('APP_PWD')
 logging_client = logging.Client.from_service_account_json(
-    APP_PATH + '/gcloud.json')
+    APP_PATH + '/config/gcloud.json')
 
 
 def write_log(logger_name, msg, level):

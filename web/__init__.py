@@ -6,10 +6,6 @@ from .page import static_page, contact_page
 from .fb_bot import fb_bot
 from .profile import profile_page, login_manager, blueprint
 
-# set environmental var for supervisor
-os.environ.setdefault(
-    'SUPERVISOR_PWD', os.path.dirname(os.path.realpath(__file__)))
-
 
 def create_app():
     # load config files
