@@ -320,6 +320,7 @@ export default {
 };
 
 $(document).ready(function() {
+  console.log(process.env.SOCKET_URI);
   var ws = new WebSocket(process.env.SOCKET_URI);
   ws.onopen = function(event) {
     ws.send(
