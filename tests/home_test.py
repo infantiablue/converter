@@ -33,12 +33,9 @@ class HomeTestCase(unittest.TestCase):
     def test_convert(self):
         import websockets
         import asyncio
-        from server import start_server, stop_server
-        # start_server()
 
         async def notify(payload):
-            uri = 'ws://localhost:5678'
-            async with websockets.connect(uri) as websocket:
+            async with websockets.connect(os.environ.get('SOCKET_URI')) as websocket:
                 await websocket.send(str(payload).encode())
 
         data = {
@@ -54,7 +51,6 @@ class HomeTestCase(unittest.TestCase):
         response = self.tester.post('/convert', data=json.dumps(payload),
                                     content_type='application/json')
         assert response.status_code == 200
-        # stop_server()
 
     def test_get_duration(self):
         payload = dict(

@@ -13,7 +13,7 @@ from rich.console import Console
 
 console = Console(color_system='truecolor')
 install()
-
+SOCKET_PORT = 5679
 clients = {}  # client pools
 
 
@@ -56,10 +56,10 @@ def socket_download(websocket, path):
 
 def start_server():
     signal.signal(signal.SIGINT, signal_handler)
-    start_server = websockets.serve(socket_download, "127.0.0.1", 5678)
+    start_server = websockets.serve(socket_download, port=SOCKET_PORT)
     os.system('clear')
     console.print(
-        Panel('[bold magenta]Socket Server is running ... [/bold magenta]'))
+        Panel('[bold magenta]Socket Server is running at port {}... [/bold magenta]'.format(SOCKET_PORT)))
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
 

@@ -94,54 +94,43 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web'):
                 'code': 'live_video',
                 'error': 'Your requested URL is a LIVE video, and can not be downloaded.'
             })
-    if int(info['duration']) < DURATION_LIMIT:
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download(urls)
-        dir_list = os.listdir(dir_path)
-        thumb = None
-        filename = None
-        title = False
-        video_id = None
-        for f_name in dir_list:
-            # remove accents from file name for accented language and etc ...
-            if not title:
-                base = os.path.basename(f_name)
-                title = os.path.splitext(base)[0]
-            new_file = unidecode.unidecode(f_name)
-            # then rename it
-            os.rename(dir_path + '/' + f_name, dir_path + '/' + new_file)
-            if new_file.endswith('.' + audio_format):
-                filename = new_file
-                file_size = os.path.getsize(dir_path + '/' + new_file)
-            if new_file.endswith('.jpg'):
-                thumb = new_file
-            if new_file.endswith('.json'):
-                with open(dir_path + '/' + new_file) as f:
-                    data = json.load(f)
-                video_id = data['id']
-        json_result = json.dumps({
-            'status': True,
-            'data': {
-                'id': video_id,
-                'title': title,
-                'path': dir_name,
-                'filename': filename,
-                'thumb': thumb,
-                'extenstion': '.' + audio_format
-            }
-        })
-        return json_result
-    else:
-        glog.write_log('download', json.dumps({
-            'url': urls[0],
-            'status': 'exceed_filesize',
-            'source': action_from
-        }), 'WARNING')
-        return json.dumps({
-            'status': False,
-            'code': 'exceed_filesize',
-            'error': 'At the moment, I can only handle content with {} minutes long.'.format(int(DURATION_LIMIT/60))
-        })
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download(urls)
+    dir_list = os.listdir(dir_path)
+    thumb = None
+    filename = None
+    title = False
+    video_id = None
+    for f_name in dir_list:
+        # remove accents from file name for accented language and etc ...
+        if not title:
+            base = os.path.basename(f_name)
+            title = os.path.splitext(base)[0]
+        new_file = unidecode.unidecode(f_name)
+        # then rename it
+        os.rename(dir_path + '/' + f_name, dir_path + '/' + new_file)
+        if new_file.endswith('.' + audio_format):
+            filename = new_file
+            file_size = os.path.getsize(dir_path + '/' + new_file)
+        if new_file.endswith('.jpg'):
+            thumb = new_file
+        if new_file.endswith('.json'):
+            with open(dir_path + '/' + new_file) as f:
+                data = json.load(f)
+            video_id = data['id']
+    json_result = json.dumps({
+        'status': True,
+        'data': {
+            'id': video_id,
+            'title': title,
+            'path': dir_name,
+            'filename': filename,
+            'thumb': thumb,
+            'extenstion': '.' + audio_format
+        }
+    })
+    return json_result
 
 
 if __name__ == '__main__':

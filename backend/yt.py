@@ -6,7 +6,6 @@ from beaker.cache import CacheManager
 from beaker.util import parse_cache_config_options
 
 APP_PATH = os.environ.get('APP_PWD')
-
 CACHE_FILE = APP_PATH + '/cache/popular_youtube.json'
 YT_KEY = str(os.environ.get('YOUTUBE_API_KEY'))
 YT_API_ENDPOINT = 'https://www.googleapis.com/youtube/v3/'
@@ -21,6 +20,19 @@ tmpl_cache = cache.get_cache('template', type='dbm', expire=1800)
 
 
 def get_popular_video_youtube(limit=30, random_videos=False, country='US'):
+    '''
+    Get a number of popular youtube video by country
+
+    Args:
+
+        limit (int, optional): The number of video to receive. Defaults to 30.
+        random_videos (bool, optional): Random or not. Defaults to False.
+        country (str, optional): Defaults to 'US'.
+
+    Returns:
+
+        json: a list with: id, url, title, thumb
+    '''
     payload = {
         'part': ['snippet', 'contentDetails', 'statistics'],
         'chart': 'mostPopular',
@@ -49,27 +61,39 @@ def get_popular_video_youtube(limit=30, random_videos=False, country='US'):
         video_list = range(0, limit)
 
     for i in video_list:
-        item = data['items'][i]
-        if 'maxres' in item['snippet']['thumbnails']:
-            thumbnail = item['snippet']['thumbnails']['maxres']['url']
-        elif 'standard' in item['snippet']['thumbnails']:
-            thumbnail = item['snippet']['thumbnails']['standard']['url']
-        elif 'high' in item['snippet']['high']:
-            thumbnail = item['snippet']['thumbnails']['high']['url']
-        else:
-            # customize by our own thumbnail
-            thumbnail = item['snippet']['thumbnails']['default']['url']
-
-        result.append({'id': item['id'],
-                       'url': 'https://www.youtube.com/watch?v='+item['id'],
-                       'title': item['snippet']['title'],
-                       'thumb': thumbnail})
+        if 'items' in data and data['items'][i]:
+            item = data['items'][i]
+            if 'maxres' in item['snippet']['thumbnails']:
+                thumbnail = item['snippet']['thumbnails']['maxres']['url']
+            elif 'standard' in item['snippet']['thumbnails']:
+                thumbnail = item['snippet']['thumbnails']['standard']['url']
+            elif 'high' in item['snippet']['high']:
+                thumbnail = item['snippet']['thumbnails']['high']['url']
+            else:
+                # customize by our own thumbnail
+                thumbnail = item['snippet']['thumbnails']['default']['url']
+            result.append({'id': item['id'],
+                           'url': 'https://www.youtube.com/watch?v='+item['id'],
+                           'title': item['snippet']['title'],
+                           'thumb': thumbnail})
         i = i + 1
     return json.dumps(result)
 
 
 @cache.cache('search_video_youtube', type='dbm', expire=3600)
-def search_video_youtube(keyword='', limit=30):
+def search_video_youtube(keyword, limit=30):
+    '''
+    Search for YouTube video
+
+    Args:
+
+        keyword (str): keyword to search.
+        limit (int, optional): Defaults to 30.
+
+    Returns:
+
+        json: a list with: id, url, title, thumb
+    '''
     payload = {
         'part': ['snippet', 'contentDetails', 'statistics'],
         'q': str(keyword),
@@ -99,15 +123,26 @@ def search_video_youtube(keyword='', limit=30):
         return json.dumps(data, indent=4)
 
 
-def get_yt_video_time(yt_video_url):
+def get_yt_video_time(url):
+    '''
+    Get the duration (seconds) of a Youtube video
+
+    Args:
+
+        url (str): a valid Youtube URL
+
+    Returns:
+
+        int: seconds of the video
+    '''
     import isodate
     import requests
     import urllib.parse as urlparse
     from urllib.parse import parse_qs
-    r = requests.get(yt_video_url)
-    yt_video_url = r.url
+    r = requests.get(url)
+    url = r.url
     # parse url to get video ID
-    parsed = urlparse.urlparse(yt_video_url)
+    parsed = urlparse.urlparse(url)
     yt_video_id = parse_qs(parsed.query)['v'][0]
     # make api request
     res = requests.get(

@@ -60,8 +60,9 @@
     </div>
     <div class="row" style="margin-top:5px;margin-bottom:10px" v-show="progressBar">
       <div class="col-xl-8">
-        <div class="progress" style="margin-top:10px;">
+        <div id="progress-bar-container" class="progress" style="margin-top:5px;height:20px">
           <div
+            id="progress-bar"
             class="progress-bar progress-bar-striped active progress-bar-animated"
             role="progressbar"
             aria-valuenow="0"
@@ -71,7 +72,7 @@
           ></div>
         </div>
       </div>
-      <div class="col-xl-4" v-show="progresInfo">
+      <div class="col-xl-4" v-show="progressInfo">
         <span class="form-text" id="progress-info">Starting ...</span>
       </div>
     </div>
@@ -197,7 +198,7 @@ export default {
   },
   data() {
     return {
-      progresInfo: false,
+      progressInfo: false,
       progressBar: false,
       enableDownloadButton: true,
       errorDownload: false,
@@ -250,6 +251,7 @@ export default {
       this.enableDownloadButton = false;
       let filename = null;
       this.errorDownload = false;
+      this.progressInfo = true;
       this.spinner_loading = true;
       axios
         .post("/get_duration", {
@@ -260,7 +262,7 @@ export default {
           if (duration < 600) {
             this.spinner_loading = false;
             this.progressBar = true;
-            this.progresInfo = true;
+            $("#progress-info").html("Processing ...");
             // Process to download
             axios
               .post("/convert", {
@@ -318,7 +320,7 @@ export default {
 };
 
 $(document).ready(function() {
-  var ws = new WebSocket("ws://127.0.0.1:5678/");
+  var ws = new WebSocket(process.env.SOCKET_URI);
   ws.onopen = function(event) {
     ws.send(
       JSON.stringify({
@@ -330,9 +332,10 @@ $(document).ready(function() {
   ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
     if ("percent" in data) {
-      $(".progress-bar")
+      $("#progress-bar")
         .css("width", data["percent"] + "%")
-        .attr("aria-valuenow", data["percent"]);
+        .attr("aria-valuenow", data["percent"])
+        .html(data["percent"] + "%");
     } else {
       $("#progress-info").html(data["message"]);
     }
