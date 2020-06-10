@@ -9,10 +9,6 @@ module.exports = {
     app: './src/index.js',
   },
   plugins: [
-    //get the socket URI from environmental variables
-    new webpack.DefinePlugin({
-      'process.env.SOCKET_URI': JSON.stringify(process.env.SOCKET_URI)
-    }),
     new VueLoaderPlugin(),
     new CleanWebpackPlugin(['dist']),
     new MiniCssExtractPlugin({
