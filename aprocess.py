@@ -13,7 +13,6 @@ import websockets
 import asyncio
 from backend.utils import print_progress_bar, get_timestamp
 
-DURATION_LIMIT = 600
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
 target_client = None
 st = get_timestamp(time_format='%Y-%m-%d_%H-%M')

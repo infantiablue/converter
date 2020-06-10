@@ -78,9 +78,12 @@ def convert():
         #
         audio_format = 'mp3'
         audio_quality = data['audio_quality']
-        result = download([request.json['urls']], audio_format,
-                          audio_quality, target=data['name'])
-
+        from aprocess import download_logger
+        try:
+            result = download([request.json['urls']], audio_format,
+                              audio_quality, target=data['name'])
+        except Exception as e:
+            download_logger.error('Error at %s', 'division', exc_info=e)
         return jsonify(result), 200
 
 

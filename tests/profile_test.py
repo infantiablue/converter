@@ -5,7 +5,7 @@ from flask_dance.consumer.storage import MemoryStorage
 import unittest
 from _pytest.monkeypatch import MonkeyPatch
 app = create_app()
-BASE_URL = os.environ.get('FLASK_ROOT_URL')
+BASE_URL = 'http://localhost'
 
 
 class ProfileTestCase(unittest.TestCase):
