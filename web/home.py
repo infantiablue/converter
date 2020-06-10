@@ -3,8 +3,7 @@ import sys
 import time
 import json
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for, jsonify, Blueprint, session, after_this_request, Response, current_app
-
-from process import download
+from aprocess import download
 import requests
 from backend.yt import get_popular_video_youtube, search_video_youtube
 from backend.utils import get_client_ip
@@ -71,14 +70,21 @@ def send_img(path):
 @home_page.route('/convert', methods=['POST'])
 def convert():
     if request.method == 'POST':
+        data = request.get_data()
+        # google task handling data
+        if not isinstance(data, dict):
+            data = data.decode('utf-8')
+            data = json.loads(data.replace("'", "\""))
+        #
         audio_format = 'mp3'
-        audio_quality = request.json['audio_quality']
-        result = jsonify(
-            download([request.json['urls']], audio_format, audio_quality))
-        return result, 200
+        audio_quality = data['audio_quality']
+        result = download([request.json['urls']], audio_format,
+                          audio_quality, target=data['name'])
+
+        return jsonify(result), 200
 
 
-@home_page.route('/popular', methods=['GET'])
+@ home_page.route('/popular', methods=['GET'])
 def popular():
     if 'FLASK_ENV' not in os.environ or os.environ['FLASK_ENV'] == 'development':
         country_code = 'VN'
@@ -95,7 +101,7 @@ def popular():
         return jsonify(get_popular_video_youtube(limit=limit, random_videos=True, country=country_code)), 200
 
 
-@home_page.route('/get_duration', methods=['POST'])
+@ home_page.route('/get_duration', methods=['POST'])
 def get_duration():
     if request.method == 'POST':
         from backend.yt import get_yt_video_time

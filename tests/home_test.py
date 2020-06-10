@@ -31,14 +31,30 @@ class HomeTestCase(unittest.TestCase):
         assert response.status_code == 200
 
     def test_convert(self):
-        # remove cache
+        import websockets
+        import asyncio
+        from server import start_server, stop_server
+        # start_server()
+
+        async def notify(payload):
+            uri = 'ws://localhost:5678'
+            async with websockets.connect(uri) as websocket:
+                await websocket.send(str(payload).encode())
+
+        data = {
+            'name': 'Tester'
+        }
+        asyncio.run(notify(data))
+
         payload = dict(
             urls='https://www.youtube.com/watch?v=qbrgk2oCNFA',
-            audio_quality='192')
+            audio_quality='192',
+            name=data['name'])
 
         response = self.tester.post('/convert', data=json.dumps(payload),
                                     content_type='application/json')
         assert response.status_code == 200
+        # stop_server()
 
     def test_get_duration(self):
         payload = dict(

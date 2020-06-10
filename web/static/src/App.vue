@@ -58,6 +58,23 @@
         </div>
       </div>
     </div>
+    <div class="row" style="margin-top:5px;margin-bottom:10px" v-show="progressBar">
+      <div class="col-xl-8">
+        <div class="progress" style="margin-top:10px;">
+          <div
+            class="progress-bar progress-bar-striped active progress-bar-animated"
+            role="progressbar"
+            aria-valuenow="0"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            style="width: 0%"
+          ></div>
+        </div>
+      </div>
+      <div class="col-xl-4" v-show="progresInfo">
+        <span class="form-text" id="progress-info">Starting ...</span>
+      </div>
+    </div>
     <section v-if="downloadSuccess">
       <div class="alert alert-dismissible alert-success">
         <strong>DONE !</strong>
@@ -68,7 +85,7 @@
     </section>
     <div v-if="popularVideoContainer" class="row">
       <div class="jumbotron">
-        <h3 class="text-primary">Popular Videos</h3>
+        <h4 class="text-primary">Popular Videos</h4>
         <p class="lead d-none d-sm-block">In case you just get bored ...</p>
         <hr class="my-3" />
         <div class="card-columns">
@@ -98,7 +115,6 @@ import "./css/main.css";
 import "./css/custom.css";
 
 Vue.use(Vuelidate);
-
 /* Fixed FB Login */
 ///IE & Chrome
 if (String(window.location.hash).substring(0, 1) == "#") {
@@ -111,7 +127,16 @@ if (String(location.hash).substring(0, 1) == "#") {
   location.href = location.href.substring(0, location.href.length - 3);
 }
 /* End of Fixed FB Login*/
+/* Generate Client ID for websocket*/
+const guid = () =>
+  Math.random()
+    .toString(36)
+    .substring(2, 15) +
+  Math.random()
+    .toString(36)
+    .substring(2, 15);
 
+const converter_id = guid();
 /* Adapt to Vue.js */
 function getYoutubeVideo() {
   var youtube = document.querySelectorAll(".youtube");
@@ -172,6 +197,8 @@ export default {
   },
   data() {
     return {
+      progresInfo: false,
+      progressBar: false,
       enableDownloadButton: true,
       errorDownload: false,
       errorDownloadMsg: null,
@@ -197,7 +224,7 @@ export default {
         this.popular_videos = JSON.parse(response.data);
       })
       .catch(error => {
-        console.log(error);
+        //console.log(error);
         this.errorDownload = true;
       });
   },
@@ -231,27 +258,32 @@ export default {
         .then(response => {
           var duration = parseInt(response.data);
           if (duration < 600) {
+            this.spinner_loading = false;
+            this.progressBar = true;
+            this.progresInfo = true;
             // Process to download
             axios
               .post("/convert", {
+                name: converter_id,
                 urls: this.urlToDownload,
                 audio_quality: this.audioQuality
               })
-              .then(response => {
-                let result = JSON.parse(response.data);
+              .then(res => {
+                let result = JSON.parse(res.data);
                 if (result.status == true) {
                   filename = result.data.filename;
                   var path = result.data.path;
                   this.urlForDownload = "file/" + path + ".mp3";
                   this.downloadSuccess = true;
                   this.formUrl = false;
+                  this.progressBar = false;
                 } else {
                   this.errorDownload = true;
                   this.errorDownloadMsg = result.error;
                 }
               })
               .catch(error => {
-                //console.log(error)
+                //console.log(error);
                 this.errorDownload = true;
               })
               .finally(() => {
@@ -284,4 +316,26 @@ export default {
     new ClipboardJS(".btn");
   }
 };
+
+$(document).ready(function() {
+  var ws = new WebSocket("ws://127.0.0.1:5678/");
+  ws.onopen = function(event) {
+    ws.send(
+      JSON.stringify({
+        name: converter_id,
+        target: "False"
+      })
+    );
+  };
+  ws.onmessage = function(event) {
+    var data = JSON.parse(event.data);
+    if ("percent" in data) {
+      $(".progress-bar")
+        .css("width", data["percent"] + "%")
+        .attr("aria-valuenow", data["percent"]);
+    } else {
+      $("#progress-info").html(data["message"]);
+    }
+  };
+});
 </script>

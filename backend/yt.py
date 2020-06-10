@@ -101,9 +101,11 @@ def search_video_youtube(keyword='', limit=30):
 
 def get_yt_video_time(yt_video_url):
     import isodate
+    import requests
     import urllib.parse as urlparse
     from urllib.parse import parse_qs
-
+    r = requests.get(yt_video_url)
+    yt_video_url = r.url
     # parse url to get video ID
     parsed = urlparse.urlparse(yt_video_url)
     yt_video_id = parse_qs(parsed.query)['v'][0]

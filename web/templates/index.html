@@ -7,6 +7,8 @@
 {% endblock %}
 
 {% block script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ url_for('static', filename='dist/app.bundle.js')|autoversion }}"></script>
 <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="h2vquaox6gv2snd"></script>
+
 {% endblock %}
