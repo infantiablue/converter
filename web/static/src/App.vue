@@ -3,7 +3,7 @@
     <h3>Download MP3 from YouTube</h3>
     <section v-if="errorDownload">
       <div class="alert alert-dismissible alert-danger">
-        <strong>Oh snap!</strong>
+        <strong>Error happened!</strong>
         {{errorDownloadMsg}}
         <a href="/">Convert again</a>.
       </div>
@@ -24,12 +24,6 @@
             id="downloadHelp"
             class="form-text text-muted d-none d-sm-block"
           >For example: https://www.youtube.com/watch?v=kJQP7kiw5Fk</small>
-          <scale-loader
-            :loading="spinner_loading"
-            :color="spinner_color"
-            :height="spinner_height"
-            :width="spinner_width"
-          ></scale-loader>
           <div
             v-if="!$v.urlToDownload.url"
             class="error invalid-feedback"
@@ -106,16 +100,15 @@
 <script>
 import Vue from "vue";
 import axios from "axios";
-import ScaleLoader from "vue-spinner/src/ScaleLoader.vue";
 import Vuelidate from "vuelidate";
 import { required, url } from "vuelidate/lib/validators";
 import ClipboardJS from "clipboard";
+import VideoCard from "./components/VideoCard.vue";
 
 /* Load style */
 import "./css/main.css";
 import "./css/custom.css";
 
-Vue.use(Vuelidate);
 /* Fixed FB Login */
 ///IE & Chrome
 if (String(window.location.hash).substring(0, 1) == "#") {
@@ -177,7 +170,7 @@ function createDBButton(url, filename) {
       }
     ],
     success: function() {
-      alert("Success! Files saved to your Dropbox.");
+      alert("Success! File saved to your Dropbox.");
     },
     cancel: function() {},
     error: function(errorMessage) {
@@ -188,12 +181,10 @@ function createDBButton(url, filename) {
   document.getElementById("DBButton").appendChild(button);
 }
 
-import VideoCard from "./components/VideoCard.vue";
-
+Vue.use(Vuelidate);
 export default {
   name: "app",
   components: {
-    ScaleLoader,
     VideoCard
   },
   data() {
@@ -204,10 +195,6 @@ export default {
       errorDownload: false,
       errorDownloadMsg: null,
       urlToDownload: null,
-      spinner_color: "#3AB982",
-      spinner_width: "20px",
-      spinner_height: "20px",
-      spinner_loading: false,
       textLoading: false,
       urlForDownload: null,
       downloadSuccess: false,
@@ -252,63 +239,50 @@ export default {
       let filename = null;
       this.errorDownload = false;
       this.progressInfo = true;
-      this.spinner_loading = true;
+      //this.spinner_loading = true;
+      //this.spinner_loading = false;
+      this.progressBar = true;
+      $("#progress-info").html("Processing ...");
+
+      // Process to download
       axios
-        .post("/get_duration", {
-          yt_video_url: this.urlToDownload
+        .post("/convert", {
+          name: converter_id,
+          urls: this.urlToDownload,
+          audio_quality: this.audioQuality
         })
-        .then(response => {
-          var duration = parseInt(response.data);
-          if (duration < 600) {
-            this.spinner_loading = false;
-            this.progressBar = true;
-            $("#progress-info").html("Processing ...");
-            // Process to download
-            axios
-              .post("/convert", {
-                name: converter_id,
-                urls: this.urlToDownload,
-                audio_quality: this.audioQuality
-              })
-              .then(res => {
-                let result = JSON.parse(res.data);
-                if (result.status == true) {
-                  filename = result.data.filename;
-                  var path = result.data.path;
-                  this.urlForDownload = "file/" + path + ".mp3";
-                  this.downloadSuccess = true;
-                  this.formUrl = false;
-                  this.progressBar = false;
-                } else {
-                  this.errorDownload = true;
-                  this.errorDownloadMsg = result.error;
-                }
-              })
-              .catch(error => {
-                //console.log(error);
-                this.errorDownload = true;
-              })
-              .finally(() => {
-                this.spinner_loading = false;
-                this.formUrl = false;
-                if (this.errorDownload === false) {
-                  createDBButton(
-                    encodeURI(
-                      "https://" +
-                        window.location.hostname +
-                        "/" +
-                        this.urlForDownload
-                    ),
-                    unescape(filename)
-                  );
-                }
-              });
-          } else {
-            this.errorDownload = true;
-            this.spinner_loading = false;
+        .then(res => {
+          let result = JSON.parse(res.data);
+          if (result.status == true) {
+            filename = result.data.filename;
+            var path = result.data.path;
+            this.urlForDownload = "file/" + path + ".mp3";
+            this.downloadSuccess = true;
             this.formUrl = false;
-            this.errorDownloadMsg =
-              "Your selected video is long than 10 minutes.";
+            this.progressBar = false;
+          } else {
+            this.formUrl = false;
+            this.errorDownload = true;
+            this.progressBar = false;
+            this.errorDownloadMsg = result.error;
+          }
+        })
+        .catch(error => {
+          this.errorDownload = true;
+        })
+        .finally(() => {
+          //this.spinner_loading = false;
+          this.formUrl = false;
+          if (this.errorDownload === false) {
+            createDBButton(
+              encodeURI(
+                "https://" +
+                  window.location.hostname +
+                  "/" +
+                  this.urlForDownload
+              ),
+              unescape(filename)
+            );
           }
         });
     }
@@ -320,7 +294,7 @@ export default {
 };
 
 $(document).ready(function() {
-  //var ws = new WebSocket("wss://127.0.0.1:5679");
+  //var ws = new WebSocket("ws://127.0.0.1:5679");
   var ws = new WebSocket("wss://converter.techika.com:5678");
   ws.onopen = function(event) {
     ws.send(

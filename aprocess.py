@@ -14,6 +14,7 @@ import asyncio
 from backend.utils import print_progress_bar, get_timestamp
 
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
+DURATION_LIMIT = 600
 target_client = None
 st = get_timestamp(time_format='%Y-%m-%d_%H-%M')
 
@@ -94,11 +95,12 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web', t
             'preferredcodec': 'mp3',
             'preferredquality': audio_quality,
         }],
-        'logger': BasicLogger(urls=urls),
+        # 'logger': BasicLogger(urls=urls),
         'outtmpl': dir_path + '/%(title)s.%(ext)s',
-        'progress_hooks': [progress_hook]
+        # 'progress_hooks': [progress_hook]
     }
-
+    if target:
+        ydl_opts['progress_hooks'] = [progress_hook]
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(urls[0], download=False)
     if 'is_live' in info:
@@ -106,9 +108,14 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web', t
             return json.dumps({
                 'status': False,
                 'code': 'live_video',
-                'error': 'Your requested URL is a LIVE video, and can not be downloaded.'
+                'error': 'Your requested video is live streaming, and can not be downloaded.'
             })
-
+    if int(info['duration']) > DURATION_LIMIT:
+        return json.dumps({
+            'status': False,
+            'code': 'exceed_time',
+            'error': 'Only videos less than {} minutes could be processed for now.'.format(int(DURATION_LIMIT/60))
+        })
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download(urls)
     dir_list = os.listdir(dir_path)
@@ -148,7 +155,5 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web', t
 
 
 if __name__ == '__main__':
-    # res = json.loads(
-    #    download(['https://youtube.com/watch?v=qbrgk2oCNFA'], target='w501lse3eaabfe2alkr279'))
-    # print(res)
+    #res = print(download(['https://www.youtube.com/watch?v=A31dKWfy0fc']))
     pass

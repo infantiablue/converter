@@ -50,7 +50,9 @@ class HomeTestCase(unittest.TestCase):
 
         response = self.tester.post('/convert', data=json.dumps(payload),
                                     content_type='application/json')
+        result = json.loads(response.get_json())
         assert response.status_code == 200
+        assert result['status'] == True
 
     def test_get_duration(self):
         payload = dict(
