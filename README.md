@@ -53,7 +53,7 @@ The idea is to practice some modern web technologies such as *Flask, VueJS, Webp
 * [ ] Create [Datastore entity](https://console.cloud.google.com/datastore/welcome)
 * [ ] Generate app *SECRET_KEY* by this command `python -c 'import os; print(os.urandom(16))` | `config.py`
 * [ ] Get [FACEBOOK_OAUTH_CLIENT_ID & FACEBOOK_OAUTH_CLIENT_SECRET](https://developers.facebook.com/) | `.envrc`
-* [ ] Modify the bold path with your app directory then include the conf file `config/nginx.conf` into `/etc/nginx/nginx.conf`
+* [ ] Modify app root path & domain name then include the conf file `config/nginx.conf` into `/etc/nginx/nginx.conf`
 
         ...
         server_name  converter.techika.com;

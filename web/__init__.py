@@ -4,7 +4,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from .home import home_page
 from .page import static_page, contact_page
 from .fb_bot import fb_bot
-from .profile import profile_page, login_manager, blueprint
+from .profile import profile_page
+from .oauth import fb_blueprint, login_manager
 
 
 def create_app():
@@ -19,7 +20,7 @@ def create_app():
     app.register_blueprint(contact_page)
     # app.register_blueprint(fb_bot)
     app.register_blueprint(profile_page)
-    app.register_blueprint(blueprint, url_prefix='/login')
+    app.register_blueprint(fb_blueprint, url_prefix='/login')
     login_manager.init_app(app)
 
     return app

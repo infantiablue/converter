@@ -1,4 +1,4 @@
-from web.profile import blueprint as fb_bp
+from web.oauth import fb_blueprint as fb_bp
 import os
 from web import create_app
 from flask_dance.consumer.storage import MemoryStorage
@@ -25,7 +25,8 @@ class ProfileTestCase(unittest.TestCase):
                 '/profile', base_url=BASE_URL)
         response = self.tester.get('/profile', content_type='html/text')
         assert response.status_code == 302
-        assert response.headers['Location'] == BASE_URL+'/login/facebook'
+        assert response.headers['Location'] == BASE_URL + \
+            '/login/facebook?next=%2Fprofile'
 
     def test_profile_authorized(self):
         storage = MemoryStorage({'access_token': 'fake-token'})
@@ -34,4 +35,4 @@ class ProfileTestCase(unittest.TestCase):
         with app.test_client() as client:
             response = client.get('/profile', base_url=BASE_URL)
 
-        assert response.status_code == 200
+        assert response.status_code == 302
