@@ -320,8 +320,8 @@ export default {
 };
 
 $(document).ready(function() {
-  console.log("ws://converter.techika.com:5678");
-  var ws = new WebSocket("ws://converter.techika.com:5678");
+  //var ws = new WebSocket("wss://127.0.0.1:5679");
+  var ws = new WebSocket("wss://converter.techika.com:5678");
   ws.onopen = function(event) {
     ws.send(
       JSON.stringify({

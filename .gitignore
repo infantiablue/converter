@@ -57,3 +57,4 @@ docs/
 .vscode/
 node_modules
 gcloud.json
+*.pem
