@@ -3,12 +3,8 @@ import os
 from flask import Flask, redirect, url_for, flash, render_template, Blueprint, current_app, request
 from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 from flask_dance.consumer import oauth_authorized, oauth_error
-from flask_login import (
-    LoginManager, UserMixin, current_user,
-    login_user, logout_user
-)
-from google.cloud import datastore
-from .user import User, OathUser
+from flask_login import LoginManager, login_user
+from .user import User, OauthUser
 from .db import GoogleDatastoreBackend
 from wtforms import Form, validators, StringField
 
@@ -38,7 +34,7 @@ def facebook_logged_in(blueprint, token):
         flash('Failed to log in with facebook.', category='error')
         return False
 
-    resp = fb_blueprint.session.get('/me?fields=email,name')
+    resp = blueprint.session.get('/me?fields=email,name')
     if not resp.ok:
         msg = 'Failed to fetch user info from facebook.'
         return False
@@ -47,8 +43,8 @@ def facebook_logged_in(blueprint, token):
     facebook_user_id = str(facebook_info['id'])
     # Find this OAuth token in the database, or create it
     try:
-        oauth_user = OathUser(
-            provider=fb_blueprint.name,
+        oauth_user = OauthUser(
+            provider=blueprint.name,
             provider_user_id=facebook_user_id,
         )
     except ValueError:
@@ -62,10 +58,10 @@ def facebook_logged_in(blueprint, token):
             email=facebook_info['email'],
             username=None,
         )
-        OathUser(
+        OauthUser(
             token=token,
             user_id=new_user.user_id,
-            provider=fb_blueprint.name,
+            provider=blueprint.name,
             provider_user_id=facebook_user_id
         )
         # Log in the new local user account
@@ -82,9 +78,9 @@ def facebook_error(blueprint, error, error_description=None, error_uri=None):
         'OAuth error from {name}!'
         'error={error} description={description} uri={uri}'
     ).format(
-        name=fb_blueprint.name,
+        name=blueprint.name,
         error=error,
         description=error_description,
-        uri=error_uri,
+        uri=error_uri
     )
     flash(msg, category='error')

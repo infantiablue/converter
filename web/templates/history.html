@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% set active_page = "history" %}
+{% block content %}
+<div class="container">
+	<div class="row" style="pading-bottom:20px;">
+		<div id="page" class="col-lg-12 col-md-8 col-sm-6" >
+			<h1>History</h1>
+		</div>
+		<div id="page" class="col-lg-12 col-md-8 col-sm-6" >
+        {% if items %}
+            <table class="table">
+            <thead>
+                <tr>
+                <th scope="col">URL</th>
+                <th scope="col">Last Attempt</th>
+                <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+            <tr id="{{ item.id }}">
+                <td>{{ item.url }}</td>
+                <td>{{ item.created_at|timeago }}</td>
+                <td><a class="remove" href="#" id="rm-{{ item.id }}">Remove</a></td>
+            </tr>
+            {% endfor %}
+        {% else %}
+        <p>You have not downloaded anything yet.</p>
+        {% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(".remove").click(function(){
+    var itemID = $(this).attr("id");
+    itemID = itemID.replace("rm-","");    
+    $.ajax({
+        method: "POST",
+        url: "/history/remove",
+        data: JSON.stringify ({ id: itemID }),
+        contentType: "application/json",
+        dataType: "json"
+    })
+    .done(function(msg) {
+        $("#"+itemID).fadeOut(1000);
+    })
+    .fail(function(msg) {
+        alert( "Error happened. Please try again." );
+    })
+    ;    
+});
+</script>
+{% endblock %}
+

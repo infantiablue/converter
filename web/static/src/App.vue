@@ -4,7 +4,7 @@
     <section v-if="errorDownload">
       <div class="alert alert-dismissible alert-danger">
         <strong>Error happened!</strong>
-        {{errorDownloadMsg}}
+        {{ errorDownloadMsg }}
         <a href="/">Convert again</a>.
       </div>
     </section>
@@ -239,8 +239,6 @@ export default {
       let filename = null;
       this.errorDownload = false;
       this.progressInfo = true;
-      //this.spinner_loading = true;
-      //this.spinner_loading = false;
       this.progressBar = true;
       $("#progress-info").html("Processing ...");
 

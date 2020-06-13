@@ -4,28 +4,32 @@ html {
   position: relative;
   min-height: 100%;
 }
+
 body {
-  margin-bottom: 30px; /* Margin bottom by footer height */
+  margin-bottom: 30px;
+  /* Margin bottom by footer height */
 }
 
-div #page{
+div #page {
   text-align: justify
 }
 
-#page h1{
+#page h1 {
   text-align: center;
 }
 
-#topMenu.navbar{
+#topMenu.navbar {
   padding: 0em;
 }
 
 .footer {
-  padding-top: 15px;
+  padding-top: 20px;
   position: absolute;
-  overflow: hidden;
+  /*overflow: hidden;*/
   bottom: 0;
   width: 100%;
-  height: 45px; /* Set the fixed height of the footer here */
-  line-height: 45px; /* Vertically center the text there */
+  height: 20px;
+  /* Set the fixed height of the footer here */
+  line-height: 45px;
+  /* Vertically center the text there */
 }

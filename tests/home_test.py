@@ -20,6 +20,14 @@ class HomeTestCase(unittest.TestCase):
         response = self.tester.get('/', content_type='html/text')
         assert response.status_code == 200
 
+    def test_contact(self):
+        response = self.tester.get('/contact', content_type='html/text')
+        assert response.status_code == 200
+
+    def test_page(self):
+        response = self.tester.get('/page/support', content_type='html/text')
+        assert response.status_code == 200
+
     def test_404(self):
         response = self.tester.get('/not_found', content_type='html/text')
         assert response.status_code == 404

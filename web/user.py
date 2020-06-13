@@ -7,7 +7,7 @@ from flask_login import UserMixin, current_user
 from .db import query_handling, gclient
 
 
-class OathUser(UserMixin):
+class OauthUser(UserMixin):
     __acceptable_keys_list = ['oauth_id', 'provider',
                               'provider_user_id', 'user_id', 'token']
 
@@ -39,7 +39,7 @@ class OathUser(UserMixin):
 
     @staticmethod
     def get(provider, provider_user_id):
-        query = OathUser.client.query(kind='Oauth')
+        query = gclient.query(kind='Oauth')
         query.add_filter('provider', '=', provider)
         query.add_filter('provider_user_id', '=', provider_user_id)
         try:
@@ -85,14 +85,20 @@ class User(UserMixin):
         return self.user_id
 
     def set_username(self, username):
-        updated_user = User.get(self.user_id)
-        updated_user['username'] = username
-        User.client.put(updated_user)
+        query = gclient.query(kind='Users')
+        query.add_filter('username', '=', username)
+        result = list(query.fetch())
+        if not result:
+            updated_user = User.get(self.user_id)
+            updated_user['username'] = username
+            gclient.put(updated_user)
+            return True
+        return False
 
     @staticmethod
     def get(user_id):
-        key = User.client.key('Users', int(user_id))
-        user = User.client.get(key)
+        key = gclient.key('Users', int(user_id))
+        user = gclient.get(key)
         return user
 
     @query_handling
@@ -102,7 +108,7 @@ class User(UserMixin):
 
     @staticmethod
     def list(limit=50):
-        query = User.client.query(kind='Users')
+        query = gclient.query(kind='Users')
         users = list(query.fetch(limit=limit))
         return users
 

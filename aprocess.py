@@ -97,7 +97,6 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web', t
         }],
         # 'logger': BasicLogger(urls=urls),
         'outtmpl': dir_path + '/%(title)s.%(ext)s',
-        # 'progress_hooks': [progress_hook]
     }
     if target:
         ydl_opts['progress_hooks'] = [progress_hook]
@@ -155,5 +154,8 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web', t
 
 
 if __name__ == '__main__':
-    #res = print(download(['https://www.youtube.com/watch?v=A31dKWfy0fc']))
-    pass
+    from web.db import gclient
+    key = gclient.key('History', 5710975315476480)
+    item = gclient.get(key)
+    print(item['userid'])
+    # print(gclient.delete(key))

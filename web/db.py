@@ -7,6 +7,7 @@ gclient = datastore.Client.from_service_account_json(
     APP_PATH+'/config/gcloud.json')
 
 
+# decoration function to handle query
 def query_handling(function):
     def wrapper(*args, **kwargs):
         try:

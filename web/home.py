@@ -1,14 +1,19 @@
 import os
 import sys
-import time
 import json
+import datetime
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for, jsonify, Blueprint, session, after_this_request, Response, current_app
 from aprocess import download
 import requests
+import urllib.parse as urlparse
+from urllib.parse import parse_qs
 from backend.yt import get_popular_video_youtube, search_video_youtube
 from backend.utils import get_client_ip
+from flask_login import current_user
+from google.cloud import datastore
+from .db import gclient
 # setup encoding and absolute root path
-# ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.'))
+
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
 # setup directory path
 static_file_dir = os.path.join(APP_PATH, 'files')
@@ -80,14 +85,45 @@ def convert():
         audio_quality = data['audio_quality']
         from aprocess import download_logger
         try:
-            result = download([request.json['urls']], audio_format,
+            url = request.json['urls']
+            result = download([url], audio_format,
                               audio_quality, target=data['name'])
+
+            if not current_user.is_anonymous:
+
+                r = requests.get(url)
+                url = r.url
+                # parse url to get video ID
+                parsed = urlparse.urlparse(url)
+                # strip wwww
+                provider = str(parsed.netloc).replace('www.', '')
+                video_id = parse_qs(parsed.query)['v'][0]
+                # check if url existed
+                item = datastore.Entity(gclient.key('History'))
+                query = gclient.query(kind='History')
+                query.add_filter('userid', '=', str(current_user.user_id))
+                query.add_filter('video_id', '=', video_id)
+                query.add_filter('provider', '=', provider)
+                items = list(query.fetch())
+                with gclient.transaction():
+                    if not items:
+                        item.update({
+                            'url': url,
+                            'userid': current_user.user_id,
+                            'video_id': video_id,
+                            'provider': provider,
+                            'created_at': datetime.datetime.utcnow()
+                        })
+                    else:
+                        item = gclient.get(items[0].key)
+                        item['created_at'] = datetime.datetime.utcnow()
+                    gclient.put(item)
         except Exception as e:
             download_logger.error('Error at %s', 'division', exc_info=e)
         return jsonify(result), 200
 
 
-@ home_page.route('/popular', methods=['GET'])
+@home_page.route('/popular', methods=['GET'])
 def popular():
     if 'FLASK_ENV' not in os.environ or os.environ['FLASK_ENV'] == 'development':
         country_code = 'VN'
@@ -104,7 +140,7 @@ def popular():
         return jsonify(get_popular_video_youtube(limit=limit, random_videos=True, country=country_code)), 200
 
 
-@ home_page.route('/get_duration', methods=['POST'])
+@home_page.route('/get_duration', methods=['POST'])
 def get_duration():
     if request.method == 'POST':
         from backend.yt import get_yt_video_time
