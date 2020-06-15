@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, abort, current_app, request, flash, url_for, redirect
 from jinja2 import TemplateNotFound
-from backend.utils import send_email
+from utils.utils import send_email
 from wtforms import Form, TextAreaField, validators, StringField
 
 APP_PATH = os.path.dirname(os.path.realpath(__file__))

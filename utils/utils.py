@@ -7,49 +7,6 @@ import pytz
 import requests
 import json
 
-# SOURCE: https://stackoverflow.com/questions/287871/print-in-terminal-with-colors
-CEND = '\033[0m'
-CGREEN = '\33[32m'
-
-# Progress Bar
-# SOURCE: https://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console
-
-
-def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
-    """
-    Call in a loop to create terminal progress bar
-    @params:
-        iteration   - Required  : current iteration (Int)
-        total       - Required  : total iterations (Int)
-        prefix      - Optional  : prefix string (Str)
-        suffix      - Optional  : suffix string (Str)
-        decimals    - Optional  : positive number of decimals in percent complete (Int)
-        length      - Optional  : character length of bar (Int)
-        fill        - Optional  : bar fill character (Str)
-    """
-    percent = ("{0:." + str(decimals) + "f}").format(100 *
-                                                     (iteration / float(total)))
-    filled_length = int(length * iteration // total)
-    bar = fill * filled_length + '-' * (length - filled_length)
-    print(CGREEN+'\r%s |%s| %s%% %s' %
-          (prefix, bar, percent, suffix), end='\r'+CEND)
-    # Print New Line on Complete
-    if iteration == total:
-        print()
-
-
-# Turn off output
-# SOURCE: https://thesmithfam.org/blog/2012/10/25/temporarily-suppress-console-output-in-python/
-@contextmanager
-def suppress_stdout():
-    with open(os.devnull, "w") as devnull:
-        old_stdout = sys.stdout
-        sys.stdout = devnull
-        try:
-            yield
-        finally:
-            sys.stdout = old_stdout
-
 
 # Get timestamp by configured timezone
 def get_timestamp(tz='Asia/Ho_Chi_Minh', time_format='%a %b %d %Y %H:%M:%S'):

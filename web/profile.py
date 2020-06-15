@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, flash, render_template, request, Blueprint, jsonify
 from wtforms import Form, validators, StringField
 from flask_login import current_user, login_required, logout_user
+from flask_dance.contrib.facebook import facebook
 from .user import User
 from .db import gclient
 
@@ -20,8 +21,10 @@ def timeago_filter(timestamp):
 
 
 @profile_page.route('/profile', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def profile():
+    if not facebook.authorized:
+        return redirect(url_for('facebook.login'))
     if hasattr(current_user, 'user_id'):
         user = User(user_id=current_user.user_id)
     form = ProfileForm(request.form)
@@ -47,7 +50,6 @@ def profile_history():
     query.add_filter('userid', '=', current_user.user_id)
     # need to create index for Datastore to process
     query.order = ['-created_at']
-    items = list(query.fetch())
     return render_template('history.html', items=items)
 
 

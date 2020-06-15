@@ -1,13 +1,6 @@
 indexes:
-- kind: History
-  properties:
-  - name: userid
-  - name: provider
-  - name: created_at
-    direction: desc
-
-- kind: History
-  properties:
-  - name: userid
-  - name: created_at
-    direction: desc    
+  - kind: History
+    properties:
+      - name: userid
+      - name: created_at
+        direction: desc

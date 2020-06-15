@@ -7,11 +7,11 @@ from aprocess import download
 import requests
 import urllib.parse as urlparse
 from urllib.parse import parse_qs
-from backend.yt import get_popular_video_youtube, search_video_youtube
-from backend.utils import get_client_ip
+from utils.yt import get_popular_video_youtube, search_video_youtube
+from utils.utils import get_client_ip
 from flask_login import current_user
 from google.cloud import datastore
-from .db import gclient
+from .db import gclient, limit_history
 # setup encoding and absolute root path
 
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -104,6 +104,7 @@ def convert():
                 query.add_filter('userid', '=', str(current_user.user_id))
                 query.add_filter('video_id', '=', video_id)
                 query.add_filter('provider', '=', provider)
+                query.order = ['-created_at']
                 items = list(query.fetch())
                 with gclient.transaction():
                     if not items:
@@ -118,6 +119,7 @@ def convert():
                         item = gclient.get(items[0].key)
                         item['created_at'] = datetime.datetime.utcnow()
                     gclient.put(item)
+                    limit_history(current_user.user_id)
         except Exception as e:
             download_logger.error('Error at %s', 'division', exc_info=e)
         return jsonify(result), 200
@@ -143,6 +145,6 @@ def popular():
 @home_page.route('/get_duration', methods=['POST'])
 def get_duration():
     if request.method == 'POST':
-        from backend.yt import get_yt_video_time
+        from utils.yt import get_yt_video_time
         yt_video_url = request.json['yt_video_url']
         return get_yt_video_time(yt_video_url), 200

@@ -7,6 +7,19 @@ gclient = datastore.Client.from_service_account_json(
     APP_PATH+'/config/gcloud.json')
 
 
+def limit_history(user_id):
+    query = gclient.query(kind='History')
+    query.add_filter('userid', '=', user_id)
+    # need to create index for Datastore to process
+    query.order = ['-created_at']
+    items = list(query.fetch())
+    if len(items) > 50:
+        gclient.delete(items[-1].key)
+        return items[-1].key
+    else:
+        return False
+
+
 # decoration function to handle query
 def query_handling(function):
     def wrapper(*args, **kwargs):

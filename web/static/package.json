@@ -1,7 +1,7 @@
 {
   "name": "c2c-frontend",
   "version": "1.0.0",
-  "description": "the user inteface of convert2.cloud app",
+  "description": "The user inteface of convert2.cloud app",
   "private": true,
   "main": "app.js",
   "scripts": {
@@ -34,6 +34,7 @@
     "style-loader": "^0.21.0",
     "terser-webpack-plugin": "^3.0.2",
     "vue-loader": "^15.9.2",
+    "vue-router": "^3.3.4",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.8.0",
@@ -53,7 +54,6 @@
     "popper.js": "^1.16.1",
     "vue": "^2.6.11",
     "vue-progress": "^0.2.1",
-    "vue-spinner": "^1.0.3",
     "vuelidate": "^0.7.5"
   }
 }

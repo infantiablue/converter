@@ -23,23 +23,33 @@
           <small
             id="downloadHelp"
             class="form-text text-muted d-none d-sm-block"
-          >For example: https://www.youtube.com/watch?v=kJQP7kiw5Fk</small>
-          <div
-            v-if="!$v.urlToDownload.url"
-            class="error invalid-feedback"
-          >It does't look like an URL.</div>
-          <div v-if="!$v.urlToDownload.required" class="error invalid-feedback">URL is required.</div>
+            >For example: https://www.youtube.com/watch?v=kJQP7kiw5Fk</small
+          >
+          <div v-if="!$v.urlToDownload.url" class="error invalid-feedback">
+            It does't look like an URL.
+          </div>
+          <div v-if="!$v.urlToDownload.required" class="error invalid-feedback">
+            URL is required.
+          </div>
         </div>
       </div>
       <div clas="col-xl-2">
         <div class="form-group mr-2 ml-3">
-          <select id="audioQuality" class="form-control custom-select" v-model="audioQuality">
+          <select
+            id="audioQuality"
+            class="form-control custom-select"
+            v-model="audioQuality"
+          >
             <option value="128">128 kbps</option>
             <option value="192">192 kbps</option>
             <option value="256">256 kbps</option>
             <option value="320">320 kbps</option>
           </select>
-          <small id="audioQualityHelp" class="form-text text-muted d-none d-sm-block">Audio quality</small>
+          <small
+            id="audioQualityHelp"
+            class="form-text text-muted d-none d-sm-block"
+            >Audio quality</small
+          >
         </div>
       </div>
       <div clas="col-xl-2">
@@ -48,13 +58,23 @@
             :disabled="isDisabled"
             v-on:click.once="downloadLink"
             class="btn btn-primary form-control"
-          >Submit</button>
+          >
+            Submit
+          </button>
         </div>
       </div>
     </div>
-    <div class="row" style="margin-top:5px;margin-bottom:10px" v-show="progressBar">
+    <div
+      class="row"
+      style="margin-top:5px;margin-bottom:10px"
+      v-show="progressBar"
+    >
       <div class="col-xl-8">
-        <div id="progress-bar-container" class="progress" style="margin-top:5px;height:20px">
+        <div
+          id="progress-bar-container"
+          class="progress"
+          style="margin-top:5px;height:20px"
+        >
           <div
             id="progress-bar"
             class="progress-bar progress-bar-striped active progress-bar-animated"
@@ -166,8 +186,8 @@ function createDBButton(url, filename) {
     files: [
       {
         url: url,
-        filename: filename
-      }
+        filename: filename,
+      },
     ],
     success: function() {
       alert("Success! File saved to your Dropbox.");
@@ -175,7 +195,7 @@ function createDBButton(url, filename) {
     cancel: function() {},
     error: function(errorMessage) {
       console.log(errorMessage);
-    }
+    },
   };
   var button = Dropbox.createSaveButton(options);
   document.getElementById("DBButton").appendChild(button);
@@ -185,7 +205,7 @@ Vue.use(Vuelidate);
 export default {
   name: "app",
   components: {
-    VideoCard
+    VideoCard,
   },
   data() {
     return {
@@ -201,17 +221,17 @@ export default {
       formUrl: true,
       audioQuality: "128",
       popularVideoContainer: false,
-      popular_videos: null
+      popular_videos: null,
     };
   },
   mounted: function() {
     axios
       .get("/popular?limit=15")
-      .then(response => {
+      .then((response) => {
         this.popularVideoContainer = true;
         this.popular_videos = JSON.parse(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         //console.log(error);
         this.errorDownload = true;
       });
@@ -219,19 +239,19 @@ export default {
   validations: {
     urlToDownload: {
       required,
-      url
-    }
+      url,
+    },
   },
   computed: {
     isDisabled: function() {
       return !this.enableDownloadButton;
-    }
+    },
   },
   methods: {
     status(validation) {
       return {
         "is-invalid": validation.$error,
-        "is-valid": validation.$dirty
+        "is-valid": validation.$dirty,
       };
     },
     downloadLink() {
@@ -247,9 +267,9 @@ export default {
         .post("/convert", {
           name: converter_id,
           urls: this.urlToDownload,
-          audio_quality: this.audioQuality
+          audio_quality: this.audioQuality,
         })
-        .then(res => {
+        .then((res) => {
           let result = JSON.parse(res.data);
           if (result.status == true) {
             filename = result.data.filename;
@@ -265,7 +285,7 @@ export default {
             this.errorDownloadMsg = result.error;
           }
         })
-        .catch(error => {
+        .catch((error) => {
           this.errorDownload = true;
         })
         .finally(() => {
@@ -283,12 +303,12 @@ export default {
             );
           }
         });
-    }
+    },
   },
   updated() {
     getYoutubeVideo();
     new ClipboardJS(".btn");
-  }
+  },
 };
 
 $(document).ready(function() {
@@ -298,7 +318,7 @@ $(document).ready(function() {
     ws.send(
       JSON.stringify({
         name: converter_id,
-        target: "False"
+        target: "False",
       })
     );
   };

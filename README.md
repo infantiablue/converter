@@ -1,31 +1,31 @@
 # Convert2.Cloud
 
-The idea is to practice some modern web technologies such as *Flask, VueJS, Webpack, Bootstrap* ... to develop a web application then deploy it to *Google Compute Engine (GCE)*, with *Google DataStore* in robust ways. The main function of the app is to convert an online video from youtube or other services to MP3 with some addtional features:
+The idea is to practice some modern web technologies such as _Flask, VueJS, Webpack, Bootstrap_ ... to develop a web application then deploy it to _Google Compute Engine (GCE)_, with _Google DataStore_ in robust ways. The main function of the app is to convert an online video from youtube or other services to MP3 with some addtional features:
 
-* Facebook authorization
-* Save the converted file to DropBox
+- Facebook authorization
+- Save the converted file to DropBox
 
 ## Requirements
 
-* Python 3 and packages in `requirements.txt`
-* Node, npm and packages in `web/static/package.json` (for development)
-* Nginx for reserve proxy server
-* Google Cloud account
-* Facebook Developer account
+- Python 3 and packages in `requirements.txt`
+- Node, npm and packages in `web/static/package.json` (for development)
+- Nginx for reserve proxy server
+- Google Cloud account
+- Facebook Developer account
 
 ## Set Up
 
-1. Create an VM instance on Google Compute Engine
-   * [Use SSH for GitHub](https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh)
-   * [SSH to connect VM instance](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/create-ssh-keys-detailed)
-2. Install required packages
+1.  Create an VM instance on Google Compute Engine
+    - [Use SSH for GitHub](https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh)
+    - [SSH to connect VM instance](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/create-ssh-keys-detailed)
+2.  Install required packages
 
         sudo apt install software-properties-common python3 python3-venv python-pip python3-pip python-pip python3-dev git nodejs npm openssl build-essential libssl-dev libffi-dev ffmpeg virtualenv direnv nginx`
 
-3. Git clone
-4. Create virtual environment (inside the app directory) `python -m venv env`
-5. Install and configure 'direnv` with the current shell, follow [this instruction](https://direnv.net/docs/hook.html).
-6. Create `.envrc` file
+3.  Git clone
+4.  Create virtual environment (inside the app directory) `python -m venv env`
+5.  Install and configure 'direnv` with the current shell, follow [this instruction](https://direnv.net/docs/hook.html).
+6.  Create `.envrc` file
 
         source env/bin/activate
         export LANG="en_US.UTF-8"
@@ -42,18 +42,19 @@ The idea is to practice some modern web technologies such as *Flask, VueJS, Webp
         export APP_PWD="[your-app-root-directory]"
         gcloud config set project [your-google-cloud-project-id]
 
-7. Install Python dependencies 'pip install -r requirements.txt`
+7.  Install Python dependencies 'pip install -r requirements.txt`
 
 ## Congiguration
 
-* [ ] Run `gcloud init` to configure [Google Cloud SDK authentication](https://cloud.google.com/sdk/docs/authorizing)
-* [ ] Create [Google cloud service account key](https://console.cloud.google.com/apis/credentials/serviceaccountkey) then fille the name to *GOOGLE_APPLICATION_CREDENTIALS* | `.envrc`
-* [ ] Enable [logging service](https://console.developers.google.com/apis/api/logging.googleapis.com/overview?project=528683999125)
-* [ ] Get [YOUTUBE_API_KEY](https://developers.google.com/youtube/v3/getting-started) | `.envrc`
-* [ ] Create [Datastore entity](https://console.cloud.google.com/datastore/welcome)
-* [ ] Generate app *SECRET_KEY* by this command `python -c 'import os; print(os.urandom(16))` | `config.py`
-* [ ] Get [FACEBOOK_OAUTH_CLIENT_ID & FACEBOOK_OAUTH_CLIENT_SECRET](https://developers.facebook.com/) | `.envrc`
-* [ ] Modify app root path & domain name then include the conf file `config/nginx.conf` into `/etc/nginx/nginx.conf`
+- [ ] Run `gcloud init` to configure [Google Cloud SDK authentication](https://cloud.google.com/sdk/docs/authorizing)
+- [ ] Create [Google cloud service account key](https://console.cloud.google.com/apis/credentials/serviceaccountkey) then fille the name to _GOOGLE_APPLICATION_CREDENTIALS_ | `.envrc`
+- [ ] Enable [logging service](https://console.developers.google.com/apis/api/logging.googleapis.com/overview?project=528683999125)
+- [ ] Get [YOUTUBE_API_KEY](https://developers.google.com/youtube/v3/getting-started) | `.envrc`
+- [ ] Create [Datastore entity](https://console.cloud.google.com/datastore/welcome)
+- [ ] Run command to create indexes `gcloud datastore indexes create config/index.yaml
+- [ ] Generate app _SECRET_KEY_ by this command `python -c 'import os; print(os.urandom(16))` | `config.py`
+- [ ] Get [FACEBOOK_OAUTH_CLIENT_ID & FACEBOOK_OAUTH_CLIENT_SECRET](https://developers.facebook.com/) | `.envrc`
+- [ ] Modify app root path & domain name then include the conf file `config/nginx.conf` into `/etc/nginx/nginx.conf`
 
         ...
         server_name  converter.techika.com;
@@ -65,13 +66,13 @@ The idea is to practice some modern web technologies such as *Flask, VueJS, Webp
         }
         location /files/ {
             alias /home/truong/converter/web/files;
-        }  
+        }
 
-* [ ] Start gunicorn server `supervisord -c config/supervisor.conf`
-* [ ] Configure SSL
-  
+- [ ] Start gunicorn server `supervisord -c config/supervisor.conf`
+- [ ] Configure SSL
+
         sudo add-apt-repository ppa:certbot/certbot
         sudo apt install python-certbot-nginx
         sudo certbot --nginx -d your_domain -d www.your_domain
 
-* [ ] Set-up Mail Account then fill in *MAIL_USERNAME*, *MAIL_PASSWORD*, *MAIL_SENDER*, [Gmail will be used](https://support.google.com/mail/answer/185833?hl=en) in this case for the sake of expediency. | `.envrc`
+- [ ] Set-up Mail Account then fill in _MAIL_USERNAME_, _MAIL_PASSWORD_, _MAIL_SENDER_, [Gmail will be used](https://support.google.com/mail/answer/185833?hl=en) in this case for the sake of expediency. | `.envrc`

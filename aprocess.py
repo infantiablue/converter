@@ -7,11 +7,12 @@ import os
 import logging
 import youtube_dl
 import unidecode
-from backend import glog
 import uuid
 import websockets
 import asyncio
-from backend.utils import print_progress_bar, get_timestamp
+from utils import glog
+from utils.utils import get_timestamp
+
 
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
 DURATION_LIMIT = 600
@@ -154,8 +155,5 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web', t
 
 
 if __name__ == '__main__':
-    from web.db import gclient
-    key = gclient.key('History', 5710975315476480)
-    item = gclient.get(key)
-    print(item['userid'])
-    # print(gclient.delete(key))
+    for x in range(50):
+        print(x)
