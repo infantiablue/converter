@@ -50,6 +50,7 @@ def profile_history():
     query.add_filter('userid', '=', current_user.user_id)
     # need to create index for Datastore to process
     query.order = ['-created_at']
+    items = list(query.fetch())
     return render_template('history.html', items=items)
 
 
