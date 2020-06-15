@@ -104,7 +104,6 @@ def convert():
                 query.add_filter('userid', '=', str(current_user.user_id))
                 query.add_filter('video_id', '=', video_id)
                 query.add_filter('provider', '=', provider)
-                query.order = ['-created_at']
                 items = list(query.fetch())
                 with gclient.transaction():
                     if not items:
