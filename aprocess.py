@@ -11,6 +11,7 @@ import uuid
 import websockets
 import asyncio
 from utils import glog
+from utils.logger import create_logger
 from utils.utils import get_timestamp
 
 
@@ -19,36 +20,7 @@ DURATION_LIMIT = 600
 target_client = None
 st = get_timestamp(time_format='%Y-%m-%d_%H-%M')
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.DEBUG,
-    handlers=[
-        logging.FileHandler(APP_PATH+'/logs/download.log'),
-    ])
-download_logger = logging.getLogger('download')
-
-
-class BasicLogger(object):
-    def __init__(self, urls):
-        self.urls = urls
-
-    def debug(self, msg):
-        download_logger.debug(msg)
-
-    def warning(self, msg):
-        download_logger.warning(msg)
-        glog.write_log('download', json.dumps({
-            'url': self.urls[0],
-            'msg': msg
-        }), 'WARNING')
-
-    def error(self, msg):
-        download_logger.error(msg)
-        glog.write_log('download', json.dumps({
-            'url': self.urls[0],
-            'status': 'error',
-            'msg': msg
-        }), 'ERROR')
+download_logger = create_logger()
 
 
 async def notify(payload):
@@ -101,59 +73,67 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web', t
     }
     if target:
         ydl_opts['progress_hooks'] = [progress_hook]
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(urls[0], download=False)
-    if 'is_live' in info:
-        if info['is_live']:
+
+    try:
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(urls[0], download=False)
+        if 'is_live' in info:
+            if info['is_live']:
+                return json.dumps({
+                    'status': False,
+                    'code': 'live_video',
+                    'error': 'Your requested video is live streaming, and can not be downloaded.'
+                })
+        if int(info['duration']) > DURATION_LIMIT:
             return json.dumps({
                 'status': False,
-                'code': 'live_video',
-                'error': 'Your requested video is live streaming, and can not be downloaded.'
+                'code': 'exceed_time',
+                'error': 'Only videos less than {} minutes could be processed for now.'.format(int(DURATION_LIMIT/60))
             })
-    if int(info['duration']) > DURATION_LIMIT:
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download(urls)
+        dir_list = os.listdir(dir_path)
+        thumb = None
+        filename = None
+        title = False
+        video_id = None
+        for f_name in dir_list:
+            # remove accents from file name for accented language and etc ...
+            if not title:
+                base = os.path.basename(f_name)
+                title = os.path.splitext(base)[0]
+            new_file = unidecode.unidecode(f_name)
+            # then rename it
+            os.rename(dir_path + '/' + f_name, dir_path + '/' + new_file)
+            if new_file.endswith('.' + audio_format):
+                filename = new_file
+                file_size = os.path.getsize(dir_path + '/' + new_file)
+            if new_file.endswith('.jpg'):
+                thumb = new_file
+            if new_file.endswith('.json'):
+                with open(dir_path + '/' + new_file) as f:
+                    data = json.load(f)
+                video_id = data['id']
+        json_result = json.dumps({
+            'status': True,
+            'data': {
+                'id': video_id,
+                'title': title,
+                'path': dir_name,
+                'filename': filename,
+                'thumb': thumb,
+                'extenstion': '.' + audio_format
+            }
+        })
+        return json_result
+    except (youtube_dl.utils.DownloadError, youtube_dl.utils.ExtractorError):
         return json.dumps({
             'status': False,
-            'code': 'exceed_time',
-            'error': 'Only videos less than {} minutes could be processed for now.'.format(int(DURATION_LIMIT/60))
+            'code': 'not_found',
+            'error': 'This video is unavailable.'
         })
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download(urls)
-    dir_list = os.listdir(dir_path)
-    thumb = None
-    filename = None
-    title = False
-    video_id = None
-    for f_name in dir_list:
-        # remove accents from file name for accented language and etc ...
-        if not title:
-            base = os.path.basename(f_name)
-            title = os.path.splitext(base)[0]
-        new_file = unidecode.unidecode(f_name)
-        # then rename it
-        os.rename(dir_path + '/' + f_name, dir_path + '/' + new_file)
-        if new_file.endswith('.' + audio_format):
-            filename = new_file
-            file_size = os.path.getsize(dir_path + '/' + new_file)
-        if new_file.endswith('.jpg'):
-            thumb = new_file
-        if new_file.endswith('.json'):
-            with open(dir_path + '/' + new_file) as f:
-                data = json.load(f)
-            video_id = data['id']
-    json_result = json.dumps({
-        'status': True,
-        'data': {
-            'id': video_id,
-            'title': title,
-            'path': dir_name,
-            'filename': filename,
-            'thumb': thumb,
-            'extenstion': '.' + audio_format
-        }
-    })
-    return json_result
 
 
 if __name__ == '__main__':
-    for x in range(50):
-        print(x)
+    print(download(['https://www.youtube.com/watch?v=QG9M6IcU000']))

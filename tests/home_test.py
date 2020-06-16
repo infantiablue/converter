@@ -38,7 +38,7 @@ class HomeTestCase(unittest.TestCase):
         response = self.tester.get('/popular', content_type='html/text')
         assert response.status_code == 200
 
-    def test_convert(self):
+    def test_convert_with_socket(self):
         import websockets
         import asyncio
 
@@ -61,6 +61,30 @@ class HomeTestCase(unittest.TestCase):
         result = json.loads(response.get_json())
         assert response.status_code == 200
         assert result['status'] == True
+
+    def test_convert_with_socket_nonexist_video(self):
+        import websockets
+        import asyncio
+
+        async def notify(payload):
+            async with websockets.connect(os.environ.get('SOCKET_URI')) as websocket:
+                await websocket.send(str(payload).encode())
+
+        data = {
+            'name': 'Tester'
+        }
+        asyncio.run(notify(data))
+
+        payload = dict(
+            urls='https://www.youtube.com/watch?v=qbrgk2o000',
+            audio_quality='192',
+            name=data['name'])
+
+        response = self.tester.post('/convert', data=json.dumps(payload),
+                                    content_type='application/json')
+        result = json.loads(response.get_json())
+        assert response.status_code == 200
+        assert result['status'] == False
 
     def test_get_duration(self):
         payload = dict(
