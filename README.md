@@ -20,7 +20,7 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
     - [SSH to connect VM instance](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/create-ssh-keys-detailed)
 2.  Install required packages
 
-        sudo apt install software-properties-common python3 python3-venv python-pip python3-pip python-pip python3-dev git nodejs npm openssl build-essential libssl-dev libffi-dev ffmpeg virtualenv direnv nginx`
+        sudo apt install software-properties-common python3 python3-venv python-pip python3-pip python-pip python3-dev git nodejs npm openssl build-essential libssl-dev libffi-dev libpq-dev ffmpeg virtualenv direnv nginx`
 
 3.  Git clone
 4.  Create virtual environment (inside the app directory) `python -m venv env`

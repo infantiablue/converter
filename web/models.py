@@ -25,6 +25,7 @@ class Oauth(db.Model, OAuthConsumerMixin):
     __table_args__ = {'extend_existing': True}
     provider_user_id = db.Column(db.String(256), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    token = db.Column(db.String(), nullable=False)
     user = db.relationship(User)
 
 

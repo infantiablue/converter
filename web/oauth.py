@@ -53,7 +53,7 @@ def facebook_logged_in(blueprint, token):
         db.session.add(new_user)
         db.session.commit()
         new_oauth = Oauth(
-            token=token,
+            token=str(token),
             user_id=new_user.id,
             provider=blueprint.name,
             provider_user_id=facebook_user_id
