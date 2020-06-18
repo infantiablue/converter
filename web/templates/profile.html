@@ -17,7 +17,10 @@
                           {% endif %}
                           {% endwith %}
                       {% from "helpers/_formhelper.html" import render_field %}
+                      {{ render_field(form.fullname) }}
+                      {{ render_field(form.email) }}
                       {{ render_field(form.username) }}
+                      
                       <!-- Form actions -->
                       <div class="form-group">
                           <div class="col-md-12 text-left">

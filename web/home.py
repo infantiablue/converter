@@ -2,18 +2,19 @@ import os
 import sys
 import json
 import datetime
-from flask import Flask, render_template, send_from_directory, request, redirect, url_for, jsonify, Blueprint, session, after_this_request, Response, current_app
-from aprocess import download
+from flask import Flask, g, render_template, send_from_directory, request, redirect, url_for, jsonify, Blueprint, session, after_this_request, Response
+from utils.process import download
 import requests
 import urllib.parse as urlparse
 from urllib.parse import parse_qs
-from utils.yt import get_popular_video_youtube, search_video_youtube
+from utils.yt import get_popular_video_youtube
 from utils.utils import get_client_ip
 from flask_login import current_user
-from google.cloud import datastore
-from .db import gclient, limit_history
-# setup encoding and absolute root path
+from .ext import db
+from .models import Video
 
+
+# setup encoding and absolute root path
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
 # setup directory path
 static_file_dir = os.path.join(APP_PATH, 'files')
@@ -39,6 +40,11 @@ def detect_user_language():
     if not 'country_code' in session:
         client_info = json.loads(get_client_ip(request))
         session['country_code'] = client_info['country_code']
+
+
+@home_page.before_request
+def get_current_user():
+    g.user = current_user
 
 
 @home_page.route('/')
@@ -83,14 +89,13 @@ def convert():
 
         audio_format = 'mp3'
         audio_quality = data['audio_quality']
-        from aprocess import download_logger
+        from utils.process import download_logger
         try:
             url = request.json['urls']
             result = download([url], audio_format,
                               audio_quality, target=data['name'])
 
             if not current_user.is_anonymous:
-
                 r = requests.get(url)
                 url = r.url
                 # parse url to get video ID
@@ -99,26 +104,18 @@ def convert():
                 provider = str(parsed.netloc).replace('www.', '')
                 video_id = parse_qs(parsed.query)['v'][0]
                 # check if url existed
-                item = datastore.Entity(gclient.key('History'))
-                query = gclient.query(kind='History')
-                query.add_filter('userid', '=', str(current_user.user_id))
-                query.add_filter('video_id', '=', video_id)
-                query.add_filter('provider', '=', provider)
-                items = list(query.fetch())
-                with gclient.transaction():
-                    if not items:
-                        item.update({
-                            'url': url,
-                            'userid': current_user.user_id,
-                            'video_id': video_id,
-                            'provider': provider,
-                            'created_at': datetime.datetime.utcnow()
-                        })
-                    else:
-                        item = gclient.get(items[0].key)
-                        item['created_at'] = datetime.datetime.utcnow()
-                    gclient.put(item)
-                    limit_history(current_user.user_id)
+                video = Video.query.filter_by(user_id=int(
+                    current_user.id), video_id=video_id, provider=provider).first()
+                if not video:
+                    new_video = Video(
+                        url=url,
+                        user_id=current_user.id,
+                        video_id=video_id,
+                        provider=provider
+                    )
+                    db.session.add(new_video)
+                    db.session.commit()
+                    Video.limit_history_videos()
         except Exception as e:
             download_logger.error('Error at %s', 'division', exc_info=e)
         return jsonify(result), 200

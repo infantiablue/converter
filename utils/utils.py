@@ -31,9 +31,9 @@ def str_to_bool(s):
         raise ValueError
 
 
-def generate_secret_key():
+def generate_secret_key(size):
     import binascii
-    return binascii.hexlify(os.urandom(24))
+    return binascii.hexlify(os.urandom(size))
 
 
 def human_readable_size(size, decimal_places=2):

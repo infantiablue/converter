@@ -13,9 +13,6 @@ class HomeTestCase(unittest.TestCase):
         super().__init__(*args)
         self.tester = app.test_client(self)
 
-    def test_config(self):
-        assert not create_app().testing
-
     def test_home(self):
         response = self.tester.get('/', content_type='html/text')
         assert response.status_code == 200

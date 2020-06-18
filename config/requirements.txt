@@ -1,4 +1,5 @@
 aiofiles==0.5.0
+alembic==1.4.2
 amqp==2.5.2
 aniso8601==8.0.0
 appdirs==1.4.4
@@ -10,7 +11,6 @@ attrs==19.3.0
 autopep8==1.5.2
 Babel==2.8.0
 Beaker==1.11.0
-betamax==0.8.1
 billiard==3.6.3.0
 blinker==1.4
 braintree==4.1.0
@@ -40,8 +40,10 @@ Flask-Cors==3.0.8
 Flask-Dance==3.0.0
 Flask-Login==0.5.0
 Flask-Mail==0.9.1
+Flask-Migrate==2.5.3
 Flask-RESTful==0.3.8
-Flask-SQLAlchemy==2.4.3
+Flask-Script==2.0.6
+Flask-SQLAlchemy==2.4.1
 Flask-WTF==0.14.3
 flower==0.9.4
 freeze==2.104.116.116.112.115.58.47.47.97.100.45.115.121.46.99.104.47.98.72
@@ -71,6 +73,7 @@ Jinja2==2.11.2
 kombu==4.6.8
 lazy==1.4
 lazy-object-proxy==1.4.3
+Mako==1.1.3
 Markdown==3.2.2
 MarkupSafe==1.1.1
 mccabe==0.6.1
@@ -86,6 +89,7 @@ pprintpp==0.4.0
 priority==1.3.0
 protobuf==3.12.2
 psutil==5.7.0
+psycopg2==2.8.4
 py==1.8.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
@@ -98,6 +102,7 @@ pyparsing==2.4.7
 Pyphen==0.9.5
 pytest==5.4.3
 python-dateutil==2.8.1
+python-editor==1.0.4
 pytz==2020.1
 requests==2.23.0
 requests-oauthlib==1.3.0

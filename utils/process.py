@@ -14,8 +14,7 @@ from utils import glog
 from utils.logger import create_logger
 from utils.utils import get_timestamp
 
-
-APP_PATH = os.path.dirname(os.path.realpath(__file__))
+APP_PATH = os.environ.get('APP_PWD')
 DURATION_LIMIT = 600
 target_client = None
 st = get_timestamp(time_format='%Y-%m-%d_%H-%M')

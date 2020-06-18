@@ -4,7 +4,7 @@ import json
 import datetime
 from google.cloud import datastore
 from flask_login import UserMixin, current_user
-from .db import query_handling, gclient
+from .firestore import query_handling, gclient
 
 
 class OauthUser(UserMixin):
