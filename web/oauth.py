@@ -48,12 +48,11 @@ def facebook_logged_in(blueprint, token):
         new_user = User(
             fullname=facebook_info['name'],
             email=facebook_info['email'],
-            username=None,
         )
         db.session.add(new_user)
         db.session.commit()
         new_oauth = Oauth(
-            token=str(token),
+            token=token,
             user_id=new_user.id,
             provider=blueprint.name,
             provider_user_id=facebook_user_id
