@@ -6,6 +6,7 @@ from .forms import ProfileForm, LoginForm
 profile_bp = Blueprint('profile_bp', __name__, None)
 
 
+# filter time ago
 @profile_bp.app_template_filter('timeago')
 def timeago_filter(timestamp):
     import arrow

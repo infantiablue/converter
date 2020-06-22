@@ -1,4 +1,4 @@
-# Convert2.Cloud
+# Convertca.com
 
 The idea is to practice some modern web technologies such as _Flask, VueJS, Webpack, Bootstrap_ ... to develop a web application then deploy it to _Google Compute Engine (GCE)_, with _Google DataStore_ in robust ways. The main function of the app is to convert an online video from youtube or other services to MP3 with some addtional features:
 
@@ -15,17 +15,17 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
 
 ## Set Up
 
-1.  Create an VM instance on Google Compute Engine
+1. Create an VM instance on Google Compute Engine
     - [Use SSH for GitHub](https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh)
     - [SSH to connect VM instance](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/create-ssh-keys-detailed)
-2.  Install required packages
+2. Install required packages
 
         sudo apt install software-properties-common python3 python3-venv python-pip python3-pip python-pip python3-dev git nodejs npm openssl build-essential libssl-dev libffi-dev libpq-dev ffmpeg virtualenv direnv nginx`
 
-3.  Git clone
-4.  Create virtual environment (inside the app directory) `python -m venv env`
-5.  Install and configure 'direnv` with the current shell, follow [this instruction](https://direnv.net/docs/hook.html).
-6.  Create `.envrc` file
+3. Git clone
+4. Create virtual environment (inside the app directory) `python -m venv env`
+5. Install and configure 'direnv` with the current shell, follow [this instruction](https://direnv.net/docs/hook.html).
+6. Create `.envrc` file
 
         source env/bin/activate
         export LANG="en_US.UTF-8"
@@ -42,7 +42,7 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
         export APP_PWD="[your-app-root-directory]"
         gcloud config set project [your-google-cloud-project-id]
 
-7.  Install Python dependencies 'pip install -r requirements.txt`
+7. Install Python dependencies 'pip install -r requirements.txt`
 
 ## Congiguration
 
@@ -70,9 +70,8 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
 
 - [ ] Start gunicorn server `supervisord -c config/supervisor.conf`
 - [ ] Configure SSL
-
-        sudo add-apt-repository ppa:certbot/certbot
-        sudo apt install python-certbot-nginx
+        sudo apt install software-properties-common
+        sudo apt install certbot python-certbot-nginx
         sudo certbot --nginx -d your_domain -d www.your_domain
 
 - [ ] Set-up Mail Account then fill in _MAIL_USERNAME_, _MAIL_PASSWORD_, _MAIL_SENDER_, [Gmail will be used](https://support.google.com/mail/answer/185833?hl=en) in this case for the sake of expediency. | `.envrc`

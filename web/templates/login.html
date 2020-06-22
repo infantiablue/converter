@@ -28,14 +28,17 @@
           </fieldset>
         </form>
 
-        <div class="col-md-6 text-left" style="color: white;">
-          <a class="btn btn-block btn-social btn-google">
+        <div class="col-md-6">
+          <a
+            class="btn btn-block btn-social btn-google"
+            href="{{ url_for('google.login') }}"
+          >
             <span class="fa fa-google"></span> Sign in with Google
           </a>
-        </div>
-        <p></p>
-        <div class="col-md-6 text-left" style="color: white;">
-          <a class="btn btn-block btn-social btn-facebook">
+          <a
+            class="btn btn-block btn-social btn-facebook"
+            href="{{ url_for('facebook.login') }}"
+          >
             <span class="fa fa-facebook"></span> Sign in with Facebook
           </a>
         </div>

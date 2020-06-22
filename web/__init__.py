@@ -14,6 +14,7 @@ from .models import db, User
 def create_app():
     # load config files
     app = Flask(__name__)
+
     # Add any other application configuration
     admin = Admin(app, index_view=AdminIndexView())
     # Other admin configuration as shown in last recipe

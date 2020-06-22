@@ -1,3 +1,4 @@
+import click
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Blueprint, flash
 from flask_login import current_user
@@ -6,8 +7,21 @@ from flask_admin.form import rules
 from flask_admin.contrib.sqla import ModelView
 from wtforms import PasswordField
 
-admin_bp = Blueprint('admin_page', __name__,
+admin_bp = Blueprint('admin_bp', __name__,
                      template_folder='templates/admin')
+
+
+# CLI command to create admin user
+@admin_bp.cli.command('promote')
+@click.argument('email')
+def promote_admin(email):
+    from .models import db, User
+    user = User.query.filter_by(email=email).one()
+    if user.admin == True:
+        print('The user with email {} is admin already'.format(email))
+    else:
+        user.admin = True
+        db.session.commit()
 
 
 class AdminIndexView(AdminIndexView):

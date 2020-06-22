@@ -8,6 +8,7 @@ from flask_login import login_user, current_user, LoginManager
 from .models import db, User, Oauth
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError
 
 login_manager = LoginManager()
 fb_blueprint = make_facebook_blueprint(
@@ -66,12 +67,16 @@ def google_logged_in(blueprint, token):
                         fullname=info['name'])
         # Associate the new local user account with the OAuth token
         oauth.user = new_user
-        # Save and commit our database models
-        db.session.add_all([new_user, oauth])
-        db.session.commit()
-        # Log in the new local user account
-        login_user(new_user)
-        #flash('Successfully signed in.')
+        try:
+            db.session.add_all([new_user, oauth])
+            db.session.commit()
+            # Log in the new local user account
+            login_user(new_user)
+        except IntegrityError:
+            db.session.rollback()
+            flash(
+                'Your email has been associated with another social account.', category='danger')
+            return redirect(url_for('profile_bp.login'))
 
     # Disable Flask-Dance's default behavior for saving the OAuth token
     return False
@@ -111,11 +116,16 @@ def facebook_logged_in(blueprint, token):
             email=facebook_info['email'],
         )
         oauth.user = new_user
-        db.session.add_all([new_user, oauth])
-        db.session.commit()
-
-        # Log in the new local user account
-        login_user(new_user)
+        try:
+            db.session.add_all([new_user, oauth])
+            db.session.commit()
+            # Log in the new local user account
+            login_user(new_user)
+        except IntegrityError:
+            db.session.rollback()
+            flash(
+                'Your email has been associated with another social account.', category='danger')
+            return redirect(url_for('profile_bp.login'))
 
     # Disable Flask-Dance's default behavior for saving the OAuth token
     return False
@@ -126,7 +136,7 @@ def facebook_error(blueprint, message, response):
     msg = ('OAuth error from {name}! ' 'message={message} response={response}').format(
         name=blueprint.name, message=message, response=response
     )
-    flash(msg, category='error')
+    flash(msg, category='danger')
 
 
 # notify on OAuth provider error
@@ -135,4 +145,4 @@ def google_error(blueprint, message, response):
     msg = ('OAuth error from {name}! ' 'message={message} response={response}').format(
         name=blueprint.name, message=message, response=response
     )
-    flash(msg, category='error')
+    flash(msg, category='danger')
