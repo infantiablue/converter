@@ -2,7 +2,9 @@ from datetime import datetime
 from flask_login import UserMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStorage
 from werkzeug.security import generate_password_hash, check_password_hash
-from .ext import db
+from flask_sqlalchemy import SQLAlchemy
+# initalize DB instance
+db = SQLAlchemy()
 
 
 class User(db.Model, UserMixin):
@@ -11,6 +13,7 @@ class User(db.Model, UserMixin):
     fullname = db.Column(db.String(200), nullable=False)
     username = db.Column(db.String(100), unique=True, nullable=True)
     email = db.Column(db.String(150), unique=True, nullable=False)
+    admin = db.Column(db.Boolean())
     pwdhash = db.Column(db.String())
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.utcnow)
@@ -18,6 +21,9 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.pwdhash, password)
+
+    def is_admin(self):
+        return self.admin
 
 
 class Oauth(db.Model, OAuthConsumerMixin):

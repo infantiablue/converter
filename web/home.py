@@ -10,8 +10,7 @@ from urllib.parse import parse_qs
 from utils.yt import get_popular_video_youtube
 from utils.utils import get_client_ip
 from flask_login import current_user
-from .ext import db
-from .models import Video
+from .models import db, Video
 
 
 # setup encoding and absolute root path
@@ -19,11 +18,11 @@ APP_PATH = os.path.dirname(os.path.realpath(__file__))
 # setup directory path
 static_file_dir = os.path.join(APP_PATH, 'files')
 
-home_page = Blueprint('home_page', __name__)
+home_bp = Blueprint('home_bp', __name__)
 
 
 # autoversioning feature to avoid cached static files
-@home_page.app_template_filter('autoversion')
+@home_bp.app_template_filter('autoversion')
 def autoversion_filter(filename):
     # determining fullpath might be project specific
     fullpath = os.path.join('web/', filename[1:])
@@ -35,30 +34,30 @@ def autoversion_filter(filename):
     return newfilename
 
 
-@home_page.before_request
+@home_bp.before_request
 def detect_user_language():
     if not 'country_code' in session:
         client_info = json.loads(get_client_ip(request))
         session['country_code'] = client_info['country_code']
 
 
-@home_page.before_request
+@home_bp.before_request
 def get_current_user():
     g.user = current_user
 
 
-@home_page.route('/')
+@home_bp.route('/')
 def index():
     return render_template('index.html')
 
 
-@home_page.errorhandler(404)
+@home_bp.errorhandler(404)
 def page_not_found(e):
     # note that we set the 404 status explicitly
     return render_template('404.html'), 404
 
 
-@home_page.route('/file/<path>.<file_ext>', methods=['GET'])
+@home_bp.route('/file/<path>.<file_ext>', methods=['GET'])
 def serve_file_in_dir(path, file_ext):
     if not os.path.isdir(os.path.join(static_file_dir, path)):
         return redirect(url_for('index'))
@@ -73,12 +72,12 @@ def serve_file_in_dir(path, file_ext):
     return send_from_directory(static_file_dir, path, as_attachment=True)
 
 
-@home_page.route('/img/<path:path>')
+@home_bp.route('/img/<path:path>')
 def send_img(path):
     return send_from_directory(static_file_dir, path)
 
 
-@home_page.route('/convert', methods=['POST'])
+@home_bp.route('/convert', methods=['POST'])
 def convert():
     if request.method == 'POST':
         data = request.get_data()
@@ -121,7 +120,7 @@ def convert():
         return jsonify(result), 200
 
 
-@home_page.route('/popular', methods=['GET'])
+@home_bp.route('/popular', methods=['GET'])
 def popular():
     if 'FLASK_ENV' not in os.environ or os.environ['FLASK_ENV'] == 'development':
         country_code = 'VN'
@@ -138,7 +137,7 @@ def popular():
         return jsonify(get_popular_video_youtube(limit=limit, random_videos=True, country=country_code)), 200
 
 
-@home_page.route('/get_duration', methods=['POST'])
+@home_bp.route('/get_duration', methods=['POST'])
 def get_duration():
     if request.method == 'POST':
         from utils.yt import get_yt_video_time

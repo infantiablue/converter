@@ -1,35 +1,31 @@
-{% extends 'base.html' %}
-{% set active_page = "contact" %}
-{% block content %}
+{% extends 'base.html' %} {% set active_page = "contact" %} {% block content %}
 <div id="app" class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <div class="well well-sm">
-                <form class="form-horizontal" action="/contact" method="post">
-                    {{ form.csrf }}
-                    <fieldset>
-                        <legend class="text-center">Have something to tell us !?</legend>
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                {% for category, message in messages %}
-                                  <div class="alert alert-{{category}}">{{ message }}</div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %}
-                        {% from "helpers/_formhelper.html" import render_field %}
-                        {{ render_field(form.name) }}
-                        {{ render_field(form.email) }}
-                        {{ render_field(form.message) }}
-                        <!-- Form actions -->
-                        <div class="form-group">
-                            <div class="col-md-12 text-left">
-                                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="well well-sm">
+        <form class="form-horizontal" action="/contact" method="post">
+          {{ form.csrf }}
+          <fieldset>
+            <legend class="text-center">Have something to tell !?</legend>
+            {% with messages = get_flashed_messages(with_categories=true) %} {%
+            if messages %} {% for category, message in messages %}
+            <div class="alert alert-{{category}}">{{ message }}</div>
+            {% endfor %} {% endif %} {% endwith %} {% from
+            "helpers/_formhelper.html" import render_field %} {{
+            render_field(form.name) }} {{ render_field(form.email) }} {{
+            render_field(form.message) }}
+            <!-- Form actions -->
+            <div class="form-group">
+              <div class="col-md-12 text-left">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  Submit
+                </button>
+              </div>
             </div>
-        </div>
+          </fieldset>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

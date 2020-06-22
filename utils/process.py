@@ -19,7 +19,7 @@ DURATION_LIMIT = 600
 target_client = None
 st = get_timestamp(time_format='%Y-%m-%d_%H-%M')
 
-download_logger = create_logger()
+download_logger = create_logger('download')
 
 
 async def notify(payload):

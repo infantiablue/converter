@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% block content %}
+<div id="app" class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="well well-sm">
+        <form
+          class="form-horizontal"
+          method="POST"
+          action="{{ url_for('profile_bp.login') }}"
+          role="form"
+        >
+          {{ form.csrf_token }}
+          <fieldset>
+            {% with messages = get_flashed_messages(with_categories=true) %} {%
+            if messages %} {% for category, message in messages %}
+            <div class="alert alert-{{category}}">{{ message }}</div>
+            {% endfor %} {% endif %} {% endwith %} {% from
+            "helpers/_formhelper.html" import render_field %} {{
+            render_field(form.username) }} {{ render_field(form.password) }}
+
+            <div class="form-group">
+              <div class="col-md-12 text-left">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  Submit
+                </button>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+
+        <div class="col-md-6 text-left" style="color: white;">
+          <a class="btn btn-block btn-social btn-google">
+            <span class="fa fa-google"></span> Sign in with Google
+          </a>
+        </div>
+        <p></p>
+        <div class="col-md-6 text-left" style="color: white;">
+          <a class="btn btn-block btn-social btn-facebook">
+            <span class="fa fa-facebook"></span> Sign in with Facebook
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block script %} {% endblock %}

@@ -36,6 +36,7 @@ easy-thumbnails==2.7
 email-validator==1.1.1
 filelock==3.0.12
 Flask==1.1.2
+Flask-Admin==1.5.6
 Flask-Cors==3.0.8
 Flask-Dance==3.0.0
 Flask-Login==0.5.0
@@ -101,6 +102,7 @@ pyOpenSSL==19.1.0
 pyparsing==2.4.7
 Pyphen==0.9.5
 pytest==5.4.3
+pytest-mock==3.1.1
 python-dateutil==2.8.1
 python-editor==1.0.4
 pytz==2020.1

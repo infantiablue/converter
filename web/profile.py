@@ -1,28 +1,19 @@
 from flask import Flask, redirect, url_for, flash, render_template, request, Blueprint, jsonify
-from wtforms import Form, validators, StringField
 from flask_login import current_user, login_required, logout_user, login_user
 from werkzeug.security import generate_password_hash
-from .models import Video, User
-from .ext import db
-
-profile_page = Blueprint('profile_page', __name__, None)
-
-
-class ProfileForm(Form):
-    fullname = StringField('Full Name:', render_kw={'disabled': ''})
-    email = StringField('Email:', render_kw={'disabled': ''})
-    username = StringField('User Name:', validators=[
-                           validators.DataRequired(), validators.Length(min=4)])
+from .models import db, Video, User
+from .forms import ProfileForm, LoginForm
+profile_bp = Blueprint('profile_bp', __name__, None)
 
 
-@profile_page.app_template_filter('timeago')
+@profile_bp.app_template_filter('timeago')
 def timeago_filter(timestamp):
     import arrow
     ts = arrow.get(timestamp)
     return ts.humanize()
 
 
-@profile_page.route('/profile', methods=['GET', 'POST'])
+@profile_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     user = User.query.get(current_user.id)
@@ -30,6 +21,7 @@ def profile():
     form.fullname.data = user.fullname
     form.email.data = user.email
     if request.method == 'GET':
+        print('debugging GET')
         if not current_user.username:
             # flash message, with category following bootstrap CSS info class convenience
             flash('You have not set your username yet.', category='danger')
@@ -47,7 +39,7 @@ def profile():
     return render_template('profile.html', title='Profile', form=form)
 
 
-@profile_page.route('/history', methods=['GET'])
+@profile_bp.route('/history', methods=['GET'])
 @login_required
 def profile_history():
     '''
@@ -60,7 +52,7 @@ def profile_history():
     return render_template('history.html', items=videos)
 
 
-@profile_page.route('/history/remove', methods=['POST'])
+@profile_bp.route('/history/remove', methods=['POST'])
 @login_required
 def profile_history_remove():
     if request.method == 'POST':
@@ -76,20 +68,34 @@ def profile_history_remove():
             return jsonify({'success': False}), 401
 
 
-@profile_page.route('/logout')
+@profile_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
+    if current_user.is_authenticated:
+        flash('You are already logged in.', 'info')
+        return redirect(url_for('home_bp.index'))
+    if request.method == 'POST' and form.validate():
+        print('debugging')
+        username = request.form.get('username')
+        password = request.form.get('password')
+        existing_user = User.query.filter_by(username=username).first()
+
+        if not (existing_user and existing_user.check_password(password)):
+            flash('Invalid username or password. Please try again.', 'danger')
+            return render_template('login.html', form=form)
+
+        login_user(existing_user)
+        #flash('You have successfully logged in.', 'success')
+        return redirect(url_for('home_bp.index'))
+
+    if form.errors:
+        flash(form.errors, 'danger')
+
+    return render_template('login.html', form=form)
+
+
+@profile_bp.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect('/')
-
-
-@profile_page.route('/login', methods=['POST'])
-def login():
-    username = request.form['username']
-    password = request.form['password']
-    existing_user = User.query.filter_by(username=username).first()
-    if not (existing_user and existing_user.check_password(password)):
-        return 'Not Found', 400
-
-    login_user(existing_user)
-    return 'Success', 200

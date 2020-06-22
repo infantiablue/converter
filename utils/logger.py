@@ -5,15 +5,15 @@ from utils import glog
 APP_PATH = os.environ.get('APP_PWD')
 
 
-def create_logger():
+def create_logger(log_name):
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         level=logging.DEBUG,
         handlers=[
-            logging.FileHandler(APP_PATH+'/logs/download.log'),
+            logging.FileHandler(APP_PATH+'/logs/'+log_name+'.log'),
         ])
     #download_logger = logging.getLogger('download')
-    return logging.getLogger('download')
+    return logging.getLogger(log_name)
 
 
 class BasicLogger(object):
