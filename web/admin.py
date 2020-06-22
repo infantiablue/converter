@@ -22,6 +22,7 @@ def promote_admin(email):
     else:
         user.admin = True
         db.session.commit()
+        print('Successfully promoted user with email {} to be an Admin'.format(email))
 
 
 class AdminIndexView(AdminIndexView):
