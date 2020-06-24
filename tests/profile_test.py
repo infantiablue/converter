@@ -61,14 +61,6 @@ class ProfileTestCase(unittest.TestCase):
         assert r.status_code == 200
         assert b'Log out' in r.data
 
-    '''
-    def test_login_with_mrblue(self):
-        r = self.client.post(
-            '/login', data=dict(username='mrblue',
-                                password='235tqk'))
-        assert r.status_code == 200
-    '''
-
     def test_history_with_auth(self):
         r = self.client.get('/history')
         assert r.status_code == 200
@@ -98,7 +90,7 @@ class ProfileTestCase(unittest.TestCase):
     def test_profile_with_auth(self):
         r = self.client.get('/profile')
         assert r.status_code == 200
-        assert b'Your details' in r.data
+        assert b'Your Profile' in r.data
         assert b'tester' in r.data
 
     def test_profile_update(self):

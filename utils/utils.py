@@ -1,14 +1,20 @@
-from contextlib import contextmanager
+import arrow
+import platform
 import sys
 import os
+import time
 import psutil
+import shutil
 import datetime
 import pytz
 import requests
 import json
-
+from .logger import create_logger
+APP_PATH = os.environ.get('APP_PWD')
 
 # Get timestamp by configured timezone
+
+
 def get_timestamp(tz='Asia/Ho_Chi_Minh', time_format='%a %b %d %Y %H:%M:%S'):
     utc_naive = datetime.datetime.utcnow()
     utc = utc_naive.replace(tzinfo=pytz.utc)
@@ -74,3 +80,37 @@ def get_client_ip(req):
         'country_code': result['country_code'],
         'country_name': result['country_name']
     })
+
+
+def creation_date(path_to_file):
+    """
+    Try to get the date that a file was created, falling back to when it was
+    last modified if that isn't possible.
+    See http://stackoverflow.com/a/39501288/1709587 for explanation.
+    """
+    if platform.system() == 'Windows':
+        return os.path.getctime(path_to_file)
+    else:
+        stat = os.stat(path_to_file)
+        try:
+            return stat.st_birthtime
+        except AttributeError:
+            # We're probably on Linux. No easy way to get creation dates here,
+            # so we'll settle for when its content was last modified.
+            return stat.st_mtime
+
+
+def remove_expired_dirs():
+    log = create_logger('removed_files')
+    files_path = APP_PATH+'/web/files/'
+    list_dir = [dI for dI in os.listdir(
+        files_path) if os.path.isdir(os.path.join(files_path, dI))]
+    if list_dir:
+        for d in list_dir:
+            fd = files_path+d
+            ts = arrow.get(creation_date(fd))
+            cts = arrow.utcnow()
+            exp_ts = cts.timestamp-ts.timestamp
+            if (exp_ts/3600) >= 1:
+                #print('{} is expired.'.format(d))
+                shutil.rmtree(fd)

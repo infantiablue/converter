@@ -72,8 +72,7 @@
     </div>
     <section v-if="downloadSuccess">
       <div class="alert alert-dismissible alert-success">
-        <strong>DONE !</strong>
-        <a :href="urlForDownload" target="blank">Download Here</a>.
+        <a :href="urlForDownload" target="blank">Download Here</a>. The link is available for 60 minutes.
         <a href="/">Convert again</a>.
         <div id="DBButton"></div>
       </div>

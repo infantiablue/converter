@@ -114,7 +114,7 @@ def convert():
                     )
                     db.session.add(new_video)
                     db.session.commit()
-                    Video.limit_history_videos()
+                    Video.limit_history_videos(user_id=current_user.id)
         except Exception as e:
             download_logger.error('Error at %s', 'division', exc_info=e)
         return jsonify(result), 200
