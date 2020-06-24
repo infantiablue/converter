@@ -11,7 +11,7 @@ from utils.yt import get_popular_video_youtube
 from utils.utils import get_client_ip
 from flask_login import current_user
 from .models import db, Video
-
+from utils.logger import app_logger
 
 # setup encoding and absolute root path
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -88,7 +88,6 @@ def convert():
 
         audio_format = 'mp3'
         audio_quality = data['audio_quality']
-        from utils.process import download_logger
         try:
             url = request.json['urls']
             result = download([url], audio_format,
@@ -104,7 +103,7 @@ def convert():
                 video_id = parse_qs(parsed.query)['v'][0]
                 # check if url existed
                 video = Video.query.filter_by(user_id=int(
-                    current_user.id), video_id=video_id, provider=provider).first()
+                    current_user.id), video_id=video_id, provider=provider).one()
                 if not video:
                     new_video = Video(
                         url=url,
@@ -115,8 +114,13 @@ def convert():
                     db.session.add(new_video)
                     db.session.commit()
                     Video.limit_history_videos(user_id=current_user.id)
+                else:
+                    video.created_at = datetime.datetime.utcnow()
+                    db.session.commit()
+
         except Exception as e:
-            download_logger.error('Error at %s', 'division', exc_info=e)
+            app_logger.error('Error at %s', 'division', exc_info=e)
+
         return jsonify(result), 200
 
 

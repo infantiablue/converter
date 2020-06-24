@@ -100,7 +100,7 @@ class ProfileTestCase(unittest.TestCase):
             '/profile', data=dict(username=new_test_username),  follow_redirects=True)
         self.client.post('/profile', data=dict(username=user_test))
         assert r.status_code == 200
-        assert b'Your details' in r.data
+        assert b'Your Profile' in r.data
         assert bytes(new_test_username, 'utf-8') in r.data
 
     def test_profile_without_auth(self):

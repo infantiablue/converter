@@ -11,15 +11,15 @@ from .profile import profile_bp
 from .oauth import fb_blueprint, gg_blueprint, login_manager
 from .models import db, User
 from utils.utils import remove_expired_dirs
-
-scheduler = BackgroundScheduler()
+from utils.logger import app_logger
 
 
 def create_app():
     # initialize app & load config
     app = Flask(__name__)
     app.config.from_object('config')
-    # start scheduler
+    # initialize scheduler
+    scheduler = BackgroundScheduler()
     scheduler.start()
     job = scheduler.add_job(remove_expired_dirs, 'interval', minutes=1)
     # initialize admin cp

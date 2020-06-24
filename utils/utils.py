@@ -9,7 +9,6 @@ import datetime
 import pytz
 import requests
 import json
-from .logger import create_logger
 APP_PATH = os.environ.get('APP_PWD')
 
 # Get timestamp by configured timezone
@@ -101,7 +100,6 @@ def creation_date(path_to_file):
 
 
 def remove_expired_dirs():
-    log = create_logger('removed_files')
     files_path = APP_PATH+'/web/files/'
     list_dir = [dI for dI in os.listdir(
         files_path) if os.path.isdir(os.path.join(files_path, dI))]

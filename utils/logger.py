@@ -1,5 +1,6 @@
 import os
 import logging
+from utils import glog
 
 APP_PATH = os.environ.get('APP_PWD')
 
@@ -14,9 +15,13 @@ def create_logger(log_name):
     return logging.getLogger(log_name)
 
 
+app_logger = create_logger('app')
+
+
 class BasicLogger(object):
     def __init__(self, urls):
         self.urls = urls
+        download_logger = create_logger('download')
 
     def debug(self, msg):
         download_logger.debug(msg)

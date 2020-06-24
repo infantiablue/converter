@@ -11,15 +11,13 @@ import uuid
 import websockets
 import asyncio
 from utils import glog
-from utils.logger import create_logger
 from utils.utils import get_timestamp
+from utils.logger import app_logger
 
 APP_PATH = os.environ.get('APP_PWD')
 DURATION_LIMIT = 600
 target_client = None
 st = get_timestamp(time_format='%Y-%m-%d_%H-%M')
-
-download_logger = create_logger('download')
 
 
 async def notify(payload):

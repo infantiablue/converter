@@ -9,7 +9,7 @@ It's a service to help you convert YouTube (and more sites are coming) video to 
 
 #### 2. Usage
 
-It's really easy, put your link to the form, the hit Send button.
+It's really easy, put your link to the form, the hit Submit button.
 
 #### 3. Plan
 
