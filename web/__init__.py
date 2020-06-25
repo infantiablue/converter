@@ -37,12 +37,11 @@ def create_app():
     app.register_error_handler(404, page_not_found)
     app.register_blueprint(admin_bp)
     app.register_blueprint(home_bp)
-    app.register_blueprint(static_page)
-    app.register_blueprint(contact_page)
-    # app.register_blueprint(fb_bot)
     app.register_blueprint(profile_bp)
     app.register_blueprint(fb_blueprint, url_prefix='/login')
     app.register_blueprint(gg_blueprint, url_prefix='/login')
+    app.register_blueprint(static_page)
+    app.register_blueprint(contact_page)
     # setup login manager
     login_manager.init_app(app)
     login_manager.login_view = 'profile_bp.login'
