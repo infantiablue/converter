@@ -2,11 +2,12 @@ import os
 import sys
 import json
 import datetime
-from flask import Flask, g, render_template, send_from_directory, request, redirect, url_for, jsonify, Blueprint, session, after_this_request, Response
+from flask import Flask, g, render_template, send_from_directory, request, redirect, url_for, jsonify, Blueprint, session
 from utils.process import download
 import requests
 import urllib.parse as urlparse
 from urllib.parse import parse_qs
+from sqlalchemy.orm.exc import NoResultFound
 from utils.yt import get_popular_video_youtube
 from utils.utils import get_client_ip
 from flask_login import current_user
@@ -88,40 +89,48 @@ def convert():
 
         audio_format = 'mp3'
         audio_quality = data['audio_quality']
-        try:
-            url = request.json['urls']
-            result = download([url], audio_format,
-                              audio_quality, target=data['name'])
 
-            if not current_user.is_anonymous:
-                r = requests.get(url)
-                url = r.url
-                # parse url to get video ID
-                parsed = urlparse.urlparse(url)
-                # strip wwww
-                provider = str(parsed.netloc).replace('www.', '')
-                video_id = parse_qs(parsed.query)['v'][0]
-                # check if url existed
-                video = Video.query.filter_by(user_id=int(
-                    current_user.id), video_id=video_id, provider=provider).one()
-                if not video:
-                    new_video = Video(
-                        url=url,
-                        user_id=current_user.id,
-                        video_id=video_id,
-                        provider=provider
-                    )
-                    db.session.add(new_video)
-                    db.session.commit()
-                    Video.limit_history_videos(user_id=current_user.id)
-                else:
-                    video.created_at = datetime.datetime.utcnow()
-                    db.session.commit()
+        url = request.json['urls']
+        r = requests.get(url)
+        url = r.url
+        # parse url to get video ID
+        parsed = urlparse.urlparse(url)
+        # strip wwww
+        provider = str(parsed.netloc).replace('www.', '')
+        if provider == 'youtube.com':
+            try:
+                result = download([url], audio_format,
+                                  audio_quality, target=data['name'])
 
-        except Exception as e:
-            app_logger.error('Error at %s', 'division', exc_info=e)
+                if not current_user.is_anonymous:
+                    video_id = parse_qs(parsed.query)['v'][0]
+                    try:
+                        # check if url existed
+                        video = Video.query.filter_by(user_id=int(
+                            current_user.id), video_id=video_id, provider=provider).one()
+                        video.created_at = datetime.datetime.utcnow()
+                        db.session.commit()
 
-        return jsonify(result), 200
+                    except NoResultFound:
+                        new_video = Video(
+                            url=url,
+                            user_id=current_user.id,
+                            video_id=video_id,
+                            provider=provider
+                        )
+                        db.session.add(new_video)
+                        db.session.commit()
+                        Video.limit_history_videos(user_id=current_user.id)
+            except Exception as e:
+                app_logger.error('Error at %s', 'division', exc_info=e)
+
+            return jsonify(result), 200
+        else:
+            return jsonify(json.dumps({
+                'status': False,
+                'code': 'unsupported_provider',
+                'error': 'This service provider is not supported yet.'
+            })), 200
 
 
 @home_bp.route('/popular', methods=['GET'])

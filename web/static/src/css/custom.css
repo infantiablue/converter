@@ -6,6 +6,10 @@ pre {
   background: #f7f7f9;
 }
 
+a:hover {
+  cursor: pointer;
+}
+
 @media (min-width: 768px) {
   body > .navbar-transparent {
     box-shadow: none;

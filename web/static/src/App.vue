@@ -3,7 +3,7 @@
     <h3>Download MP3 from YouTube</h3>
     <section v-if="errorDownload">
       <div class="alert alert-dismissible alert-danger">
-        <strong>Error happened!</strong>
+        <strong>Something goes wrong.</strong>
         {{ errorDownloadMsg }}
         <a href="/">Convert again</a>.
       </div>
@@ -250,6 +250,7 @@ export default {
         })
         .then(res => {
           let result = JSON.parse(res.data);
+          console.log(result);
           if (result.status == true) {
             filename = result.data.filename;
             var path = result.data.path;
