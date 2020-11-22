@@ -10,7 +10,7 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
 - Python 3 and packages in `requirements.txt`
 - Node, npm and packages in `web/static/package.json` (for development)
 - Nginx for reserve proxy server
-- Google Cloud account (for experimenting with logging service)
+- Google Cloud account (*for experimenting with logging service*)
 - Facebook Developer account
 
 ## Set Up
@@ -51,7 +51,7 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
 
 7. Install Python dependencies 'pip install -r requirements.txt`
 
-## Congiguration
+## Congiguration For Production
 
 - [ ] Run `gcloud init` to configure [Google Cloud SDK authentication](https://cloud.google.com/sdk/docs/authorizing)
 - [ ] Create [Google cloud service account key](https://console.cloud.google.com/apis/credentials/serviceaccountkey) then fille the name to _GOOGLE_APPLICATION_CREDENTIALS_ | `.envrc`
@@ -83,3 +83,10 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
 
 - [ ] Set-up Mail Account then fill in _MAIL_USERNAME_,_MAIL_PASSWORD_,_MAIL_SENDER_, [Gmail will be used](https://support.google.com/mail/answer/185833?hl=en) in this case for the sake of expediency. | `.envrc`
 - [ ] Run `deploy.sh` to migrate Postgresql DB
+
+## Local Development
+
+- Run `gunicorn wsgi:app` (port 8000)
+- Run `python server.py` (websocket server)
+- Run Postgres DB instance.
+  
