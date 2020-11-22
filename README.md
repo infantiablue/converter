@@ -10,7 +10,7 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
 - Python 3 and packages in `requirements.txt`
 - Node, npm and packages in `web/static/package.json` (for development)
 - Nginx for reserve proxy server
-- Google Cloud account
+- Google Cloud account (for experimenting with logging service)
 - Facebook Developer account
 
 ## Set Up
@@ -31,15 +31,22 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
         export LANG="en_US.UTF-8"
         export FLASK_APP="web"
         export FLASK_ENV="production"
-        export FLASK_ROOT_URL="http://converter.techika.com"
+        export FLASK_ROOT_URL="[your-web-url]"
+        export SECRET_KEY="[your-secret-key]"      
+        export SOCKET_URI="[your-websocket-uri]"        
         export FACEBOOK_OAUTH_CLIENT_ID="[your-fb-app-id]"
         export FACEBOOK_OAUTH_CLIENT_SECRET="[your-fb-app-secret]"
         export YOUTUBE_API_KEY="[your-youtube-api-key]"
-        export GOOGLE_APPLICATION_CREDENTIALS="google-cloud-credential.json"
+        export GOOGLE_APPLICATION_CREDENTIALS="[path to google cloud json file]"
+        export GOOGLE_OAUTH_CLIENT_ID="[...]"
+        export GOOGLE_OAUTH_CLIENT_SECRET="[...]"
+        export OAUTHLIB_RELAX_TOKEN_SCOPE="True"
+        export OAUTHLIB_INSECURE_TRANSPORT="True"        
         export MAIL_USERNAME="[your-email-address]"
-        export MAIL_PASSWORD="[your-email-password]"
-        export MAIL_SENDER="Converter"
-        export APP_PWD="[your-app-root-directory]"
+        export MAIL_PASSWORD="[https://support.google.com/mail/answer/185833?hl=en-GB]"
+        export MAIL_SENDER="[...]"
+        export APP_PWD="[your-app-root-directory]"       
+        export DATABASE_URL="[your-postgresql-uri-with-password]"
         gcloud config set project [your-google-cloud-project-id]
 
 7. Install Python dependencies 'pip install -r requirements.txt`
@@ -75,3 +82,4 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
         sudo certbot --nginx -d your_domain -d www.your_domain
 
 - [ ] Set-up Mail Account then fill in _MAIL_USERNAME_,_MAIL_PASSWORD_,_MAIL_SENDER_, [Gmail will be used](https://support.google.com/mail/answer/185833?hl=en) in this case for the sake of expediency. | `.envrc`
+- [ ] Run `deploy.sh` to migrate Postgresql DB
