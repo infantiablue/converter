@@ -59,3 +59,4 @@ docs/
 node_modules
 gcloud.json
 *.pem
+web/gdata/

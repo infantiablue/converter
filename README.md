@@ -20,7 +20,7 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
     - [SSH to connect VM instance](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/create-ssh-keys-detailed)
 2. Install required packages
 
-        sudo apt install software-properties-common python3 python3-venv python-pip python3-pip python-pip python3-dev git nodejs npm openssl build-essential libssl-dev libffi-dev libpq-dev ffmpeg virtualenv direnv nginx`
+        sudo apt install software-properties-common python3 python3-venv python-pip python3-pip python-pip python3-dev git nodejs npm openssl build-essential libssl-dev libffi-dev libpq-dev ffmpeg virtualenv direnv nginx
 
 3. Git clone
 4. Create virtual environment (inside the app directory) `python -m venv env`
@@ -51,7 +51,7 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
 - [ ] Enable [logging service](https://console.developers.google.com/apis/api/logging.googleapis.com/overview?project=528683999125)
 - [ ] Get [YOUTUBE_API_KEY](https://developers.google.com/youtube/v3/getting-started) | `.envrc`
 - [ ] Create [Datastore entity](https://console.cloud.google.com/datastore/welcome)
-- [ ] Run command to create indexes `gcloud datastore indexes create config/index.yaml
+- [ ] Run command to create indexes `gcloud datastore indexes create config/index.yaml`
 - [ ] Generate app _SECRET_KEY_ by this command `python -c 'import os; print(os.urandom(16))` | `config.py`
 - [ ] Get [FACEBOOK_OAUTH_CLIENT_ID & FACEBOOK_OAUTH_CLIENT_SECRET](https://developers.facebook.com/) | `.envrc`
 - [ ] Modify app root path & domain name then include the conf file `config/nginx.conf` into `/etc/nginx/nginx.conf`
@@ -74,4 +74,4 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
         sudo apt install certbot python-certbot-nginx
         sudo certbot --nginx -d your_domain -d www.your_domain
 
-- [ ] Set-up Mail Account then fill in _MAIL_USERNAME_, _MAIL_PASSWORD_, _MAIL_SENDER_, [Gmail will be used](https://support.google.com/mail/answer/185833?hl=en) in this case for the sake of expediency. | `.envrc`
+- [ ] Set-up Mail Account then fill in _MAIL_USERNAME_,_MAIL_PASSWORD_,_MAIL_SENDER_, [Gmail will be used](https://support.google.com/mail/answer/185833?hl=en) in this case for the sake of expediency. | `.envrc`
