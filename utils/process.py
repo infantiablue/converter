@@ -51,7 +51,6 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web', t
     # generate random dir name
     dir_name = uuid.uuid4().hex
     dir_path = os.path.join(APP_PATH+'/web/files/', dir_name)
-
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
     ydl_opts = {
@@ -62,7 +61,7 @@ def download(urls, audio_format='mp3', audio_quality='128', action_from='web', t
         'format': 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
+            'preferredcodec': audio_format,
             'preferredquality': audio_quality,
         }],
         # 'logger': BasicLogger(urls=urls),

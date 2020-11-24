@@ -87,7 +87,7 @@ def convert():
             data = data.decode('utf-8')
             data = json.loads(data.replace("'", "\""))
 
-        audio_format = 'mp3'
+        audio_format = data['audio_format']
         audio_quality = data['audio_quality']
 
         url = request.json['urls']
@@ -121,16 +121,21 @@ def convert():
                         db.session.add(new_video)
                         db.session.commit()
                         Video.limit_history_videos(user_id=current_user.id)
+                return jsonify(result), 200
             except Exception as e:
                 app_logger.error('Error at %s', 'division', exc_info=e)
+                return jsonify(json.dumps({
+                    'status': False,
+                    'code': 'error',
+                    'error': 'Something goes wrong.'
+                })), 403
 
-            return jsonify(result), 200
         else:
             return jsonify(json.dumps({
                 'status': False,
                 'code': 'unsupported_provider',
                 'error': 'This service provider is not supported yet.'
-            })), 200
+            })), 403
 
 
 @home_bp.route('/popular', methods=['GET'])

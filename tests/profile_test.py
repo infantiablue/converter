@@ -10,7 +10,7 @@ app = create_app()
 app.config['WTF_CSRF_ENABLED'] = False
 
 user_test = 'tester'
-user_pwd = '235tqk'
+user_pwd = 'abc123'
 tester_email = 'test@local.{}'.format(
     generate_secret_key(4).decode())
 
@@ -33,7 +33,7 @@ class ProfileTestCase(unittest.TestCase):
                 username='tester',
                 email=tester_email,
                 fullname='Testy Testa',
-                pwdhash=generate_password_hash('235tqk')
+                pwdhash=generate_password_hash('abc123')
             )
             db.session.add(tester)
             db.session.commit()

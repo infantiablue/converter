@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="container">
-    <h3>Download MP3 from YouTube</h3>
+    <h3>Download MP3/AAC from YouTube</h3>
     <section v-if="errorDownload">
       <div class="alert alert-dismissible alert-danger">
         <strong>Something goes wrong.</strong>
@@ -32,7 +32,7 @@
         </div>
       </div>
       <div clas="col-xl-2">
-        <div class="form-group mr-2 ml-3">
+        <div class="form-group mr-2 ml-3"> 
           <select id="audioQuality" class="form-control custom-select" v-model="audioQuality">
             <option value="128">128 kbps</option>
             <option value="192">192 kbps</option>
@@ -41,6 +41,15 @@
           </select>
           <small id="audioQualityHelp" class="form-text text-muted d-none d-sm-block">Audio quality</small>
         </div>
+      </div>
+      <div clas="col-xl-2">
+        <div class="form-group mr-2 ml-3">
+          <select id="audioFormat" class="form-control custom-select" v-model="audioFormat">
+            <option value="mp3">MP3</option>
+            <option value="aac">AAC</option>
+          </select>
+           <small id="audioFormatHelp" class="form-text text-muted d-none d-sm-block">Audio format</small>
+        </div>        
       </div>
       <div clas="col-xl-2">
         <div class="form-group">
@@ -198,6 +207,7 @@ export default {
       urlForDownload: null,
       downloadSuccess: false,
       formUrl: true,
+      audioFormat: "mp3",
       audioQuality: "128",
       popularVideoContainer: false,
       popular_videos: null
@@ -246,15 +256,16 @@ export default {
         .post("/convert", {
           name: converter_id,
           urls: this.urlToDownload,
-          audio_quality: this.audioQuality
+          audio_quality: this.audioQuality,
+          audio_format: this.audioFormat
         })
         .then(res => {
           let result = JSON.parse(res.data);
-          console.log(result);
+          // console.log(result);
           if (result.status == true) {
             filename = result.data.filename;
             var path = result.data.path;
-            this.urlForDownload = "file/" + path + ".mp3";
+            this.urlForDownload = "file/" + path + "." + this.audioFormat;
             this.downloadSuccess = true;
             this.formUrl = false;
             this.progressBar = false;

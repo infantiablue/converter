@@ -1,7 +1,7 @@
 {
-  "name": "c2c-frontend",
+  "name": "convertca-frontend",
   "version": "1.0.0",
-  "description": "The user inteface of convert2.cloud app",
+  "description": "The user inteface of convertca.com",
   "private": true,
   "main": "app.js",
   "scripts": {
@@ -50,7 +50,7 @@
     "bootswatch": "^4.5.0",
     "clipboard": "^2.0.6",
     "jquery": "^3.5.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "popper.js": "^1.16.1",
     "vue": "^2.6.11",
     "vue-progress": "^0.2.1",
