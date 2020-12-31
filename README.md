@@ -49,7 +49,12 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
         export DATABASE_URL="[your-postgresql-uri-with-password]"
         gcloud config set project [your-google-cloud-project-id]
 
-7. Install Python dependencies 'pip install -r requirements.txt`
+7. Install Python dependencies 'pip install -r config/requirements.txt`
+8. Create Postgres DB
+
+        CREATE DATABASE converter;
+        CREATE USER converter WITH ENCRYPTED PASSWORD 'password';
+        GRANT ALL PRIVILEGES ON DATABASE converter TO converter;
 
 ## Congiguration For Production
 
