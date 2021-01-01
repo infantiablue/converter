@@ -87,7 +87,10 @@ def convert():
             data = data.decode('utf-8')
             data = json.loads(data.replace("'", "\""))
 
-        audio_format = data['audio_format']
+        if 'audio_format' in data:
+            audio_format = data['audio_format']
+        else:
+            audio_format = 'mp3'
         audio_quality = data['audio_quality']
 
         url = request.json['urls']

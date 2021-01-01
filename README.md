@@ -91,6 +91,7 @@ The idea is to practice some modern web technologies such as _Flask, VueJS, Webp
 
 ## Local Development
 
+- `brew install ffmpeg`
 - Run `gunicorn wsgi:app` (port 8000)
 - Run `python server.py` (websocket server)
 - Run Postgres DB instance.
