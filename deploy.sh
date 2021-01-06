@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 #pip install -r config/requirements.txt
-supervisord -c config/supervisor.conf
+#supervisord -c config/supervisor.conf
 python manage.py db init
 python manage.py db migrate
 python manage.py db upgrade
