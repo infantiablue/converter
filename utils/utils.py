@@ -76,7 +76,7 @@ def send_simple_message(sender_name, body_msg):
         "https://api.mailgun.net/v3/mail.convertca.com/messages",
         auth=("api", os.environ.get("MAILGUN_KEY")),
         data={"from": "Convertca <no-reply@mail.convertca.com>",
-              "to": ["dangtruong@gmail.com"],
+              "to": [os.environ.get("ADMIN_EMAIL")],
               "subject": "Message from Convertca",
               "text": f"Message from {sender_name} \n--\n {body_msg}"})
 
