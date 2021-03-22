@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, abort, current_app, request, flash, url_for, redirect
 from jinja2 import TemplateNotFound
-from utils.utils import send_email, send_simple_message
+from utils.utils import send_simple_message
 from wtforms import Form, TextAreaField, validators, StringField
 
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -29,9 +29,7 @@ def contact():
         email = request.form['email']
 
         if form.validate():
-            # send_email(recipients=[email], sender_name=name,
-            #            body_msg=name + ' has sent a message: ' + message)
-            send_simple_message(name, message)
+            send_simple_message(name, email, message)
             flash('Thanks for your message, ' + name, category='success')
             return redirect('/contact')
         else:

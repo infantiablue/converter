@@ -17,7 +17,7 @@ blinker==1.4
 braintree==4.1.0
 cachetools==4.1.0
 cairocffi==1.2.0
-CairoSVG==2.4.2
+CairoSVG>=2.5.1
 celery==4.4.2
 certifi==2020.4.5.1
 cffi==1.14.0
@@ -26,11 +26,12 @@ click==7.1.2
 colorama==0.4.3
 commonmark==0.9.1
 coverage==5.1
-cryptography==3.2
+cryptography==3.3.2
 cssselect2==0.3.0
 defusedxml==0.6.0
 dill==0.3.1.1
 distlib==0.3.0
+Django==3.1.4
 dnspython==1.16.0
 easy-thumbnails==2.7
 email-validator==1.1.1
@@ -70,7 +71,7 @@ importlib-metadata==1.6.0
 isodate==0.6.0
 isort==4.3.21
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 kombu==4.6.8
 lazy==1.4
 lazy-object-proxy==1.4.3

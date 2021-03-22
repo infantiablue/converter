@@ -49,36 +49,36 @@ def human_readable_size(size, decimal_places=2):
     return f'{size:.{decimal_places}f}{unit}'
 
 
-def send_email(recipients, sender_name, body_msg):
-    import smtplib
-    from email.mime.text import MIMEText
+# def send_email(recipients, sender_name, body_msg):
+#     import smtplib
+#     from email.mime.text import MIMEText
 
-    smtp_ssl_host = 'smtp.gmail.com'
-    smtp_ssl_port = 465
-    username = os.environ.get('MAIL_USERNAME')
-    password = os.environ.get('MAIL_PASSWORD')
-    sender = os.environ.get('MAIL_SENDER')
-    targets = recipients
+#     smtp_ssl_host = 'smtp.gmail.com'
+#     smtp_ssl_port = 465
+#     username = os.environ.get('MAIL_USERNAME')
+#     password = os.environ.get('MAIL_PASSWORD')
+#     sender = os.environ.get('MAIL_SENDER')
+#     targets = recipients
 
-    msg = MIMEText(body_msg)
-    msg['Subject'] = 'Message from Converter'
-    msg['From'] = sender_name
-    msg['To'] = ', '.join(targets)
+#     msg = MIMEText(body_msg)
+#     msg['Subject'] = 'Message from Converter'
+#     msg['From'] = sender_name
+#     msg['To'] = ', '.join(targets)
 
-    server = smtplib.SMTP_SSL(smtp_ssl_host, smtp_ssl_port)
-    server.login(username, password)
-    server.sendmail(sender, targets, msg.as_string())
-    server.quit()
+#     server = smtplib.SMTP_SSL(smtp_ssl_host, smtp_ssl_port)
+#     server.login(username, password)
+#     server.sendmail(sender, targets, msg.as_string())
+#     server.quit()
 
 
-def send_simple_message(sender_name, body_msg):
+def send_simple_message(sender_name, sender_email, body_msg):
     return requests.post(
         "https://api.mailgun.net/v3/mail.convertca.com/messages",
         auth=("api", os.environ.get("MAILGUN_KEY")),
-        data={"from": "Convertca <no-reply@mail.convertca.com>",
+        data={"from": f"{sender_name} <no-reply@mail.convertca.com>",
               "to": [os.environ.get("ADMIN_EMAIL")],
               "subject": "Message from Convertca",
-              "text": f"Message from {sender_name} \n--\n {body_msg}"})
+              "text": f"Message from {sender_name} <{sender_email}> \n--\n {body_msg}"})
 
 
 def get_client_ip(req):
