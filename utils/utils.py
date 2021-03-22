@@ -71,6 +71,16 @@ def send_email(recipients, sender_name, body_msg):
     server.quit()
 
 
+def send_simple_message(sender_name, body_msg):
+    return requests.post(
+        "https://api.mailgun.net/v3/mail.convertca.com/messages",
+        auth=("api", os.environ.get("MAILGUN_KEY")),
+        data={"from": "Convertca <no-reply@mail.convertca.com>",
+              "to": ["dangtruong@gmail.com"],
+              "subject": "Message from Convertca",
+              "text": f"Message from {sender_name} \n--\n {body_msg}"})
+
+
 def get_client_ip(req):
     client_info = requests.get(
         'https://geoip-db.com/json/' + req.environ['REMOTE_ADDR'])
@@ -110,5 +120,5 @@ def remove_expired_dirs():
             cts = arrow.utcnow()
             exp_ts = cts.timestamp-ts.timestamp
             if (exp_ts/3600) >= 1:
-                #print('{} is expired.'.format(d))
+                # print('{} is expired.'.format(d))
                 shutil.rmtree(fd)
