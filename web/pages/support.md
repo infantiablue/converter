@@ -13,4 +13,4 @@ It's really easy, put your link to the form, the hit Submit button.
 
 #### 3. Plan
 
-Yup, I am working more fascinating features, just sign up and I will get you informed/
+Yup, I am working more fascinating features, just sign up and I will get you informed.
