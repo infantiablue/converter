@@ -67,7 +67,7 @@ def get_popular_video_youtube(limit=30, random_videos=False, country='US'):
                 thumbnail = item['snippet']['thumbnails']['maxres']['url']
             elif 'standard' in item['snippet']['thumbnails']:
                 thumbnail = item['snippet']['thumbnails']['standard']['url']
-            elif 'high' in item['snippet']['high']:
+            elif 'high' in item['snippet']['thumbnails']:
                 thumbnail = item['snippet']['thumbnails']['high']['url']
             else:
                 # customize by our own thumbnail
