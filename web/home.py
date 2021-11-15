@@ -38,8 +38,11 @@ def autoversion_filter(filename):
 @home_bp.before_request
 def detect_user_language():
     if not 'country_code' in session:
-        client_info = json.loads(get_client_ip(request))
-        session['country_code'] = client_info['country_code']
+        try:
+            client_info = json.loads(get_client_ip(request))
+            session['country_code'] = client_info['country_code']
+        except:
+            session['country_code'] = 'US'
 
 
 @home_bp.before_request
