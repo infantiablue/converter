@@ -75,7 +75,7 @@ kombu==4.6.8
 lazy==1.4
 lazy-object-proxy==1.4.3
 libcst==0.3.16
-Mako==1.1.3
+Mako==1.2.2
 Markdown==3.2.2
 MarkupSafe==1.1.1
 mccabe==0.6.1
