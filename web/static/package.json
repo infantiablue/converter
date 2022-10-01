@@ -44,7 +44,7 @@
     "webpack-visualizer-plugin": "^0.1.11"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
     "bootswatch": "^4.5.0",
